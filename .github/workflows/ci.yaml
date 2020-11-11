@@ -19,6 +19,7 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
+      - run: flutter build apk
 
   # build_ios:
   #   name: Build Flutter (iOS)
