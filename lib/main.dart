@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_blue/flutter_blue.dart';
+
 void main() {
-  runApp(MyApp());
+  runApp(RainbowLedsApp());
 }
 
-class MyApp extends StatelessWidget {
+class RainbowLedsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,16 +29,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        
-      ),
-    );
+        body: StreamBuilder<BluetoothState>(
+          stream: FlutterBlue.instance.state,
+          initialData: BluetoothState.unknown,
+          builder: (context, snapshot) {
+            if (snapshot.data == BluetoothState.on) {
+              return Text("BluetoothState.on");
+            }
+              return Text("BluetoothState.off");
+          },
+        ));
   }
 }
