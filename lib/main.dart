@@ -104,11 +104,11 @@ class FindDevicesScreen extends StatelessWidget {
                   builder: (context, snapshot) => Column(
                         children: snapshot.data.map((scanResult) {
                           final String data = scanResult.device.name.toString();
-                          final String text = scanResult.device.id.toString();
-                          final String text2 = scanResult.device.toString();
-                          print("$data 1");
-                          print("$text 2");
-                          print("$text2 3");
+                          final String device = scanResult.device.toString();
+                          final String advertisementData =
+                              scanResult.advertisementData.toString();
+                          print("$device 1");
+                          print("$advertisementData 2");
                           if (data != null && data.isNotEmpty) {
                             return Text('Bluetooth Device is $data.');
                           } else {
