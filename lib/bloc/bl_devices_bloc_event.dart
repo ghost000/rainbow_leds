@@ -7,6 +7,27 @@ abstract class BlDevicesBlocEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class BlDevicesBlocEventGetGroupLedsStates extends BlDevicesBlocEvent {
+  @override
+  String toString() {
+    return 'BlDevicesBlocEventGetGroupLedsStates';
+  }
+}
+
+class BlDevicesBlocEventGetIndependentLedsStates extends BlDevicesBlocEvent {
+  @override
+  String toString() {
+    return 'BlDevicesBlocEventGetIndependentLedsStates';
+  }
+}
+
+class BlDevicesBlocEventGetAllLedsStates extends BlDevicesBlocEvent {
+  @override
+  String toString() {
+    return 'BlDevicesBlocEventGetAllLedsStates';
+  }
+}
+
 class BlDevicesBlocEventAddToGroup extends BlDevicesBlocEvent {
   final LedState ledState;
 
@@ -74,7 +95,7 @@ class BlDevicesBlocEventAddToNotAssigned extends BlDevicesBlocEvent {
   @override
   String toString() {
     return 'BlDevicesBlocEventAddToNotAssigned ledState: $ledState';
-  }  
+  }
 }
 
 class BlDevicesBlocEventRemoveFromNotAssigned extends BlDevicesBlocEvent {
@@ -88,5 +109,5 @@ class BlDevicesBlocEventRemoveFromNotAssigned extends BlDevicesBlocEvent {
   @override
   String toString() {
     return 'BlDevicesBlocEventRemoveFromNotAssigned ledState: $ledState';
-  }  
+  }
 }
