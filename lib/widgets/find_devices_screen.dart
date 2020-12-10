@@ -11,57 +11,92 @@ class FindDevicesScreen extends StatelessWidget {
         title: Text("Find devices"),
       ),
       backgroundColor: Colors.lightBlue,
-      body: RefreshIndicator(
-          onRefresh: () => FlutterBlue.instance.startScan(
-              scanMode: ScanMode.lowPower, timeout: Duration(seconds: 4)),
-          child: ListView(
-            physics: const BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics()),
-            children: <Widget>[
-              StreamBuilder<List<ScanResult>>(
-                  stream: FlutterBlue.instance.scanResults,
-                  initialData: [],
-                  builder: (context, snapshot) => Column(
-                        children: snapshot.data.map((scanResult) {
-                          final String data = scanResult.device.name.toString();
-                          final String device = scanResult.device.toString();
-                          final String advertisementData =
-                              scanResult.advertisementData.toString();
-                          print("$device 1");
-                          print("$advertisementData 2");
-                          BlocProvider.of<BlDevicesBlocBloc>(context).add(
-                              BlDevicesBlocEventAddToNotAssigned(
-                                  LedState(data)));
-                          print("$device 1");
-                          print("$advertisementData 2");
-                          if (data != null && data.isNotEmpty) {
-                            return Text('Bluetooth Device is $data.');
-                          } else {
-                            return SizedBox.shrink();
-                          }
-                        }).toList(),
-                      ))
-            ],
-          )),
-      floatingActionButton: StreamBuilder<bool>(
-        stream: FlutterBlue.instance.isScanning,
-        initialData: false,
-        builder: (c, snapshot) {
-          if (snapshot.data) {
-            return FloatingActionButton(
-              child: Icon(Icons.stop),
-              onPressed: () => FlutterBlue.instance.stopScan(),
-              backgroundColor: Colors.red,
-            );
-          } else {
-            return FloatingActionButton(
-                child: Icon(Icons.search),
-                onPressed: () => FlutterBlue.instance.startScan(
-                    scanMode: ScanMode.lowLatency,
-                    timeout: Duration(seconds: 20)));
-          }
-        },
-      ),
+      body: buildRefreshIndicator(context),
+      floatingActionButton: buildStreamBuilder(context),
     );
+  }
+}
+
+Widget buildRefreshIndicator(BuildContext context) {
+  return RefreshIndicator(
+      onRefresh: () => FlutterBlue.instance.startScan(
+          scanMode: ScanMode.lowPower, timeout: Duration(seconds: 4)),
+      child: ListView(
+        physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics()),
+        children: <Widget>[
+          StreamBuilder<List<ScanResult>>(
+              stream: FlutterBlue.instance.scanResults,
+              initialData: [],
+              builder: (context, snapshot) =>
+                  buildScanResultsColumn(snapshot.data, context))
+        ],
+      ));
+}
+
+Widget buildScanResultsColumn(
+    List<ScanResult> scanResults, BuildContext context) {
+  return Column(
+    children: scanResults.map((scanResult) {
+      final String name = scanResult.device.name.toString();
+      if (name != null && name.isNotEmpty) {
+        BlocProvider.of<BlDevicesBlocBloc>(context)
+            .add(BlDevicesBlocEventAddToNotAssigned(LedState(name)));
+        return buildTextAndButtons(scanResult, context);
+      } else {
+        return SizedBox.shrink();
+      }
+    }).toList(),
+  );
+}
+
+Widget buildTextAndButtons(ScanResult scanResult, BuildContext context) {
+  final String name = scanResult.device.name.toString();
+  return new Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+    new Align(
+      child: new Text("$name"),
+      alignment: FractionalOffset.topLeft,
+    ),
+    new FlatButton(
+        onPressed: () {
+          BlocProvider.of<BlDevicesBlocBloc>(context)
+            ..add(BlDevicesBlocEventAddToIndependent(LedState(name)))
+            ..add(BlDevicesBlocEventRemoveFromNotAssigned(LedState(name)));
+        },
+        child: new Text("ADD independent")),
+    new FlatButton(
+        onPressed: () {
+          BlocProvider.of<BlDevicesBlocBloc>(context)
+            ..add(BlDevicesBlocEventAddToGroup(LedState(name)))
+            ..add(BlDevicesBlocEventRemoveFromNotAssigned(LedState(name)));
+        },
+        child: new Text("ADD group")),
+    new Divider(
+      color: Colors.blue,
+    ),
+  ]);
+}
+
+StreamBuilder<bool> buildStreamBuilder(BuildContext context) {
+  return StreamBuilder<bool>(
+    stream: FlutterBlue.instance.isScanning,
+    initialData: false,
+    builder: (context, snapshot) =>
+        buildfloatingActionButton(snapshot.data, context),
+  );
+}
+
+Widget buildfloatingActionButton(bool isScanning, BuildContext context) {
+  if (isScanning) {
+    return FloatingActionButton(
+      child: Icon(Icons.stop),
+      onPressed: () => FlutterBlue.instance.stopScan(),
+      backgroundColor: Colors.red,
+    );
+  } else {
+    return FloatingActionButton(
+        child: Icon(Icons.search),
+        onPressed: () => FlutterBlue.instance.startScan(
+            scanMode: ScanMode.lowLatency, timeout: Duration(seconds: 20)));
   }
 }
