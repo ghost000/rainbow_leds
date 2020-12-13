@@ -1,15 +1,54 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rainbow_leds/bloc/ledState.dart';
+import 'package:flutter_blue/flutter_blue.dart';
+import 'package:rxdart/rxdart.dart';
 
 part 'bl_devices_bloc_event.dart';
 part 'bl_devices_bloc_state.dart';
 
 class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
-  BlDevicesBlocBloc() : super(BlDevicesBlocStateInitial());
+  BlDevicesBlocBloc() : super(BlDevicesBlocStateInitial()) {
+    listenFlutterBlue();
+  }
+
   Set<LedState> groupLedsStates = {};
   Set<LedState> independentLedsStates = {};
   Set<LedState> notAssignedLedsStates = {};
+
+  BehaviorSubject<Set<LedState>> _groupLedsStates = BehaviorSubject.seeded({});
+  Stream<Set<LedState>> get groupLedsStatesStream => _groupLedsStates.stream;
+  BehaviorSubject<Set<LedState>> _independentLedsStates = BehaviorSubject.seeded({});
+  Stream<Set<LedState>> get independentLedsStatesStream => _independentLedsStates.stream;
+  BehaviorSubject<Set<LedState>> _notAssignedLedsStates = BehaviorSubject.seeded({});
+  Stream<Set<LedState>> get notAssignedLedsStatesStream => _notAssignedLedsStates.stream;
+
+  listenFlutterBlue() {
+    FlutterBlue.instance.scanResults.listen((event) {
+      event.forEach((scanResult) {
+        if (scanResult.device.name != null && scanResult.device.name.isNotEmpty) {
+          if (groupLedsStates
+                  .where((element) => element.name == scanResult.device.name)
+                  .isEmpty &&
+              independentLedsStates
+                  .where((element) => element.name == scanResult.device.name)
+                  .isEmpty) {
+            add(BlDevicesBlocEventAddToNotAssigned(LedState(scanResult.device.name)));
+          }
+        }
+      });
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _groupLedsStates.close();
+    _independentLedsStates.close();
+    _notAssignedLedsStates.close();
+    return super.close();
+  }
 
   @override
   Stream<BlDevicesBlocState> mapEventToState(
@@ -43,6 +82,9 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       notAssignedLedsStates.remove(event.ledState);
       independentLedsStates.remove(event.ledState);
       groupLedsStates.add(event.ledState);
+      _notAssignedLedsStates.add(notAssignedLedsStates);
+      _independentLedsStates.add(independentLedsStates);
+      _groupLedsStates.add(groupLedsStates);
       yield BlDevicesBlocStateLoadGroup(groupLedsStates.toList());
     } catch (_) {
       yield BlDevicesBlocStateLoadFailure();
@@ -53,6 +95,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       BlDevicesBlocEventRemoveFromGroup event) async* {
     try {
       groupLedsStates.remove(event.ledState);
+      _groupLedsStates.add(groupLedsStates);
       yield BlDevicesBlocStateLoadGroup(groupLedsStates.toList());
     } catch (_) {
       yield BlDevicesBlocStateLoadFailure();
@@ -65,6 +108,9 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       groupLedsStates.remove(event.ledState);
       notAssignedLedsStates.remove(event.ledState);
       independentLedsStates.add(event.ledState);
+      _notAssignedLedsStates.add(notAssignedLedsStates);
+      _independentLedsStates.add(independentLedsStates);
+      _groupLedsStates.add(groupLedsStates);
       yield BlDevicesBlocStateLoadIndependent(independentLedsStates.toList());
     } catch (_) {
       yield BlDevicesBlocStateLoadFailure();
@@ -75,6 +121,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       BlDevicesBlocEventRemoveFromIndependent event) async* {
     try {
       independentLedsStates.remove(event.ledState);
+      _independentLedsStates.add(independentLedsStates);
       yield BlDevicesBlocStateLoadIndependent(independentLedsStates.toList());
     } catch (_) {
       yield BlDevicesBlocStateLoadFailure();
@@ -87,6 +134,9 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       independentLedsStates.remove(event.ledState);
       groupLedsStates.remove(event.ledState);
       notAssignedLedsStates.add(event.ledState);
+      _notAssignedLedsStates.add(notAssignedLedsStates);
+      _independentLedsStates.add(independentLedsStates);
+      _groupLedsStates.add(groupLedsStates);
       print(independentLedsStates);
       print(groupLedsStates);
       print(notAssignedLedsStates);
@@ -101,6 +151,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       BlDevicesBlocEventRemoveFromNotAssigned event) async* {
     try {
       notAssignedLedsStates.remove(event.ledState);
+      _notAssignedLedsStates.add(notAssignedLedsStates);
       yield BlDevicesBlocStateLoadNotAssigned(notAssignedLedsStates.toList());
     } catch (_) {
       yield BlDevicesBlocStateLoadFailure();
