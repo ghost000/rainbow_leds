@@ -3,14 +3,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:rainbow_leds/bloc/blocs.dart';
 import 'package:rainbow_leds/widgets/home_page_widget.dart';
+import 'package:rainbow_leds/widgets/find_devices_screen.dart';
+import 'package:rainbow_leds/widgets/bluetooth_off_screen.dart';
+import 'package:rainbow_leds/widgets/control_panel_widget.dart';
 
 void main() {
   Bloc.observer = SimpleBlocObserver();
   runApp(
-    BlocProvider(
-      create: (context) {
-        return BlDevicesBlocBloc();
-      },
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<BlDevicesBlocBloc>(
+          create: (BuildContext context) => BlDevicesBlocBloc(),
+        ),
+        BlocProvider<AppStateBlocBloc>(
+          create: (BuildContext context) => AppStateBlocBloc(),
+        ),
+      ],
       child: RainbowLedsApp(),
     ),
   );
@@ -25,7 +33,19 @@ class RainbowLedsApp extends StatelessWidget {
         primarySwatch: Colors.amber,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Rainbow leds app'),
+      home: BlocBuilder<AppStateBlocBloc, AppStateBlocState>(
+        builder: (context, state) {
+          if (state is AppStateBlocInitial) {
+            return MyHomePage(title: 'Rainbow leds app');
+          } else if (state is AppStateBlocGroup) {
+            return FindDevicesScreen();
+          } else if (state is AppStateBlocBluetoothOff) {
+            return BluetoothOffScreen();
+          } else if (state is AppStateBlocControl) {
+            return ControlPanelScreen();
+          }
+        },
+      ),
     );
   }
 }

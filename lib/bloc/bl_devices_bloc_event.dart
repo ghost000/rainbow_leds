@@ -7,6 +7,20 @@ abstract class BlDevicesBlocEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class BlDevicesBlocEventInitial extends BlDevicesBlocEvent {
+  @override
+  String toString() {
+    return 'BlDevicesBlocEventInitial';
+  }
+}
+
+class BlDevicesBlocEventScan extends BlDevicesBlocEvent {
+  @override
+  String toString() {
+    return 'BlDevicesBlocEventScan';
+  }
+}
+
 class BlDevicesBlocEventGetGroupLedsStates extends BlDevicesBlocEvent {
   @override
   String toString() {

@@ -73,6 +73,10 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
     } else if (event is BlDevicesBlocEventGetAllLedsStates) {
       yield BlDevicesBlocStateAll(groupLedsStates.toList(),
           independentLedsStates.toList(), notAssignedLedsStates.toList());
+    } else if (event is BlDevicesBlocEventInitial) {
+      yield BlDevicesBlocStateInitial();
+    } else if (event is BlDevicesBlocEventScan) {
+      yield BlDevicesBlocStateScan(); // add scaning in this state [FEATURE]
     }
   }
 
