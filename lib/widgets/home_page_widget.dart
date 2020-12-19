@@ -13,8 +13,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
 
-    return BlocBuilder<BlDevicesBlocBloc, BlDevicesBlocState>(
-      builder: (context, state) => Scaffold(
+    return  Scaffold(
           body: Padding(
               padding: EdgeInsets.only(top: statusBarHeight),
               child: StreamBuilder<BluetoothState>(
@@ -28,7 +27,7 @@ class MyHomePage extends StatelessWidget {
                   //     .add(BlDevicesBlocEventScan());
                   return BluetoothOffScreen();
                 },
-              ))),
+              )),
     );
   }
 }

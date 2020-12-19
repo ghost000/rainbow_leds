@@ -25,6 +25,7 @@ void main() {
 }
 
 class RainbowLedsApp extends StatelessWidget {
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -44,6 +45,7 @@ class RainbowLedsApp extends StatelessWidget {
           } else if (state is AppStateBlocControl) {
             return ControlPanelScreen();
           }
+          return CircularProgressIndicator(); 
         },
       ),
     );

@@ -33,11 +33,9 @@ Widget buildIndependentControler(BuildContext context) {
   return StreamBuilder(
       stream: BlocProvider.of<BlDevicesBlocBloc>(context).independentLedsStatesStream,
       initialData: {LedState("EMPTY")},
-      builder: (context, snapshot) {
-        snapshot.data.map((ledState) {
+      builder: (context, snapshot) => snapshot.data.map((ledState) {
           return Text(ledState.name.toString());
-        }).toList();
-      });
+        }).toList());
 }
 
 Widget buildGroupControler(BuildContext context) {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rainbow_leds/bloc/blocs.dart';
-import 'package:rainbow_leds/widgets/control_panel_widget.dart';
 
 enum LedStateEnum { group, notAssigned, independent }
 
@@ -172,6 +171,7 @@ Widget buildfloatingActionButton(BuildContext context) {
 
     return FloatingActionButton(
       child: Icon(Icons.stop),
-      onPressed: () => return ControlPanelScreen(),
+      onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
+            .add(AppStateBlocEventControl()),
       backgroundColor: Colors.blue,);
 }
