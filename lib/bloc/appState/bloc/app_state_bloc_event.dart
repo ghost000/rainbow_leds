@@ -34,6 +34,7 @@ class AppStateBlocEventGroup extends AppStateBlocEvent {
     return 'AppStateBlocEventGroup';
   }
 }
+
 class AppStateBlocEventControl extends AppStateBlocEvent {
   @override
   String toString() {

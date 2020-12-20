@@ -34,7 +34,8 @@ class BlDevicesBlocStateIndependent extends BlDevicesBlocState {
   List<Object> get props => [ledStates];
 
   @override
-  String toString() => 'BlDevicesBlocStateIndependent { ledStates: $ledStates }';
+  String toString() =>
+      'BlDevicesBlocStateIndependent { ledStates: $ledStates }';
 }
 
 class BlDevicesBlocStateAll extends BlDevicesBlocState {
@@ -65,7 +66,8 @@ class BlDevicesBlocStateLoadIndependent extends BlDevicesBlocState {
   List<Object> get props => [ledStates];
 
   @override
-  String toString() => 'BlDevicesBlocStateLoadIndependent { ledStates: $ledStates }';
+  String toString() =>
+      'BlDevicesBlocStateLoadIndependent { ledStates: $ledStates }';
 }
 
 class BlDevicesBlocStateLoadGroup extends BlDevicesBlocState {
@@ -89,7 +91,8 @@ class BlDevicesBlocStateLoadNotAssigned extends BlDevicesBlocState {
   List<Object> get props => [ledStates];
 
   @override
-  String toString() => 'BlDevicesBlocStateLoadNotAssigned { ledStates: $ledStates }';
+  String toString() =>
+      'BlDevicesBlocStateLoadNotAssigned { ledStates: $ledStates }';
 }
 
 class BlDevicesBlocStateLoadFailure extends BlDevicesBlocState {

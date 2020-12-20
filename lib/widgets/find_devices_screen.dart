@@ -8,35 +8,33 @@ enum LedStateEnum { group, notAssigned, independent }
 class FindDevicesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return //BlocBuilder<BlDevicesBlocBloc, BlDevicesBlocState>(
-        //builder: (context, state) => state is BlDevicesBlocStateScan ?
-        new Scaffold(
+    return new Scaffold(
       appBar: AppBar(
         title: Text("Find devices"),
       ),
       backgroundColor: Colors.lightBlue,
       body: buildRefreshIndicator(context),
-      floatingActionButton: buildfloatingActionButton(context),//buildStreamBuilder(context),
+      floatingActionButton:
+          buildfloatingActionButton(context), //buildStreamBuilder(context),
     );
-    //    : null,
-    //);
   }
 }
 
 Widget buildRefreshIndicator(BuildContext context) {
   return RefreshIndicator(
-      onRefresh: () => FlutterBlue.instance
-          .startScan(scanMode: ScanMode.lowPower, timeout: Duration(seconds: 4)),
+      onRefresh: () => FlutterBlue.instance.startScan(
+          scanMode: ScanMode.lowPower, timeout: Duration(seconds: 4)),
       child: ListView(
-        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics()),
         children: <Widget>[
           Text(
             "notAssignedLedsStates",
             textAlign: TextAlign.left,
           ),
           StreamBuilder(
-              stream:
-                  BlocProvider.of<BlDevicesBlocBloc>(context).notAssignedLedsStatesStream,
+              stream: BlocProvider.of<BlDevicesBlocBloc>(context)
+                  .notAssignedLedsStatesStream,
               initialData: {LedState("EMPTY")},
               builder: (context, snapshot) => buildScanResultsColumn(
                   snapshot.data, LedStateEnum.notAssigned, context)),
@@ -45,17 +43,18 @@ Widget buildRefreshIndicator(BuildContext context) {
             textAlign: TextAlign.left,
           ),
           StreamBuilder(
-              stream: BlocProvider.of<BlDevicesBlocBloc>(context).groupLedsStatesStream,
+              stream: BlocProvider.of<BlDevicesBlocBloc>(context)
+                  .groupLedsStatesStream,
               initialData: {LedState("EMPTY")},
-              builder: (context, snapshot) =>
-                  buildScanResultsColumn(snapshot.data, LedStateEnum.group, context)),
+              builder: (context, snapshot) => buildScanResultsColumn(
+                  snapshot.data, LedStateEnum.group, context)),
           Text(
             "independentLedsStatesStream",
             textAlign: TextAlign.left,
           ),
           StreamBuilder(
-              stream:
-                  BlocProvider.of<BlDevicesBlocBloc>(context).independentLedsStatesStream,
+              stream: BlocProvider.of<BlDevicesBlocBloc>(context)
+                  .independentLedsStatesStream,
               initialData: {LedState("EMPTY")},
               builder: (context, snapshot) => buildScanResultsColumn(
                   snapshot.data, LedStateEnum.independent, context))
@@ -63,8 +62,8 @@ Widget buildRefreshIndicator(BuildContext context) {
       ));
 }
 
-Widget buildScanResultsColumn(
-    Set<LedState> scanResults, LedStateEnum ledStateEnum, BuildContext context) {
+Widget buildScanResultsColumn(Set<LedState> scanResults,
+    LedStateEnum ledStateEnum, BuildContext context) {
   return Column(children: <Widget>[
     new Divider(color: Colors.blue),
     ...scanResults.map((scanResult) {
@@ -77,13 +76,15 @@ Widget buildScanResultsColumn(
 Widget buildTextAndButtons(
     LedState scanResult, LedStateEnum ledStateEnum, BuildContext context) {
   final String name = scanResult.name.toString();
-  return new Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-    new Align(
-      child: new Text("$name"),
-      alignment: FractionalOffset.topLeft,
-    ),
-    ...buildButtons(scanResult, ledStateEnum, context),
-  ]);
+  return new Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        new Align(
+          child: new Text("$name"),
+          alignment: FractionalOffset.topLeft,
+        ),
+        ...buildButtons(scanResult, ledStateEnum, context),
+      ]);
 }
 
 List<Widget> buildButtons(
@@ -104,6 +105,8 @@ List<Widget> buildButtons(
   }
   return widgetList;
 }
+
+
 
 Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
   return new Align(
@@ -168,10 +171,10 @@ Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
 // }
 
 Widget buildfloatingActionButton(BuildContext context) {
-
-    return FloatingActionButton(
-      child: Icon(Icons.stop),
-      onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
-            .add(AppStateBlocEventControl()),
-      backgroundColor: Colors.blue,);
+  return FloatingActionButton(
+    child: Icon(Icons.stop),
+    onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
+        .add(AppStateBlocEventControl()),
+    backgroundColor: Colors.blue,
+  );
 }

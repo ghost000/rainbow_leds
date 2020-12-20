@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rainbow_leds/bloc/blocs.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_circle_color_picker/flutter_circle_color_picker.dart';
 
 class ControlPanelScreen extends StatelessWidget {
   @override
@@ -31,11 +32,12 @@ class ControlPanelScreen extends StatelessWidget {
 
 Widget buildIndependentControler(BuildContext context) {
   return StreamBuilder(
-      stream: BlocProvider.of<BlDevicesBlocBloc>(context).independentLedsStatesStream,
+      stream: BlocProvider.of<BlDevicesBlocBloc>(context)
+          .independentLedsStatesStream,
       initialData: {LedState("EMPTY")},
       builder: (context, snapshot) => snapshot.data.map((ledState) {
-          return Text(ledState.name.toString());
-        }).toList());
+            return Text(ledState.name.toString());
+          }).toList());
 }
 
 Widget buildGroupControler(BuildContext context) {

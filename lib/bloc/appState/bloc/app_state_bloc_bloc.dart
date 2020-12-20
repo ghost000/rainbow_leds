@@ -15,7 +15,7 @@ class AppStateBlocBloc extends Bloc<AppStateBlocEvent, AppStateBlocState> {
   listenFlutterBlue() {
     FlutterBlue.instance.state.listen((event) {
       if (event == BluetoothState.on) {
-        add(AppStateBlocEventScan());
+        add(AppStateBlocEventGroup());
       } else {
         add(AppStateBlocEventBluetoothOff());
       }
