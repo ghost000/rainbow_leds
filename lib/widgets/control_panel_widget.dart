@@ -35,18 +35,26 @@ Widget buildIndependentControler(BuildContext context) {
       stream: BlocProvider.of<BlDevicesBlocBloc>(context)
           .independentLedsStatesStream,
       initialData: {LedState("EMPTY")},
-      builder: (context, snapshot) => snapshot.data.map((ledState) {
-            return Text(ledState.name.toString());
-          }).toList());
+      builder: (context, snapshot) => buildIndependentControlPanel(snapshot.data)
+      );
 }
 
 Widget buildGroupControler(BuildContext context) {
   return StreamBuilder(
       stream: BlocProvider.of<BlDevicesBlocBloc>(context).groupLedsStatesStream,
       initialData: {LedState("EMPTY")},
-      builder: (context, snapshot) {
-        snapshot.data.map((ledState) {
-          return Text(ledState.name.toString());
-        }).toList();
-      });
+      builder: (context, snapshot) => buildControlPanel(snapshot.data)
+  );
+}
+
+Widget buildSidePanel(Set<LedState> ledStates){
+
+}
+
+Widget buildIndependentControlPanel(Set<LedState> ledStates){
+  
+}
+
+Widget buildControlPanel(Set<LedState> ledStates){
+   
 }

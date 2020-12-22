@@ -1,7 +1,9 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/painting.dart';
 
 class LedState extends Equatable {
   final String name;
+  final Color
 
   LedState(String name) : this.name = name ?? '';
 
