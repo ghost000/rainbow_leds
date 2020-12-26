@@ -35,7 +35,7 @@ Widget buildRefreshIndicator(BuildContext context) {
           StreamBuilder(
               stream: BlocProvider.of<BlDevicesBlocBloc>(context)
                   .notAssignedLedsStatesStream,
-              initialData: {LedState("EMPTY")},
+              initialData: {LedState(name:"EMPTY")},
               builder: (context, snapshot) => buildScanResultsColumn(
                   snapshot.data, LedStateEnum.notAssigned, context)),
           Text(
@@ -45,7 +45,7 @@ Widget buildRefreshIndicator(BuildContext context) {
           StreamBuilder(
               stream: BlocProvider.of<BlDevicesBlocBloc>(context)
                   .groupLedsStatesStream,
-              initialData: {LedState("EMPTY")},
+              initialData: {LedState(name:"EMPTY")},
               builder: (context, snapshot) => buildScanResultsColumn(
                   snapshot.data, LedStateEnum.group, context)),
           Text(
@@ -55,7 +55,7 @@ Widget buildRefreshIndicator(BuildContext context) {
           StreamBuilder(
               stream: BlocProvider.of<BlDevicesBlocBloc>(context)
                   .independentLedsStatesStream,
-              initialData: {LedState("EMPTY")},
+              initialData: {LedState(name:"EMPTY")},
               builder: (context, snapshot) => buildScanResultsColumn(
                   snapshot.data, LedStateEnum.independent, context))
         ],
@@ -106,14 +106,12 @@ List<Widget> buildButtons(
   return widgetList;
 }
 
-
-
 Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
   return new Align(
     child: new FlatButton(
       onPressed: () {
         BlocProvider.of<BlDevicesBlocBloc>(context)
-            .add(BlDevicesBlocEventAddToIndependent(LedState(scanResult.name)));
+            .add(BlDevicesBlocEventAddToIndependent(LedState(name:scanResult.name)));
       },
       child: new Text("ADD independent"),
     ),
@@ -126,7 +124,7 @@ Widget buildGroupFlatButton(LedState scanResult, BuildContext context) {
     child: new FlatButton(
       onPressed: () {
         BlocProvider.of<BlDevicesBlocBloc>(context)
-            .add(BlDevicesBlocEventAddToGroup(LedState(scanResult.name)));
+            .add(BlDevicesBlocEventAddToGroup(LedState(name:scanResult.name)));
       },
       child: new Text("ADD Group"),
     ),
@@ -139,7 +137,7 @@ Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
     child: new FlatButton(
       onPressed: () {
         BlocProvider.of<BlDevicesBlocBloc>(context)
-            .add(BlDevicesBlocEventAddToNotAssigned(LedState(scanResult.name)));
+            .add(BlDevicesBlocEventAddToNotAssigned(LedState(name:scanResult.name)));
       },
       child: new Text("ADD NotAssigned"),
     ),

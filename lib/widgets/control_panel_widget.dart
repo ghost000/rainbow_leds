@@ -32,29 +32,34 @@ class ControlPanelScreen extends StatelessWidget {
 
 Widget buildIndependentControler(BuildContext context) {
   return StreamBuilder(
-      stream: BlocProvider.of<BlDevicesBlocBloc>(context)
-          .independentLedsStatesStream,
-      initialData: {LedState("EMPTY")},
-      builder: (context, snapshot) => buildIndependentControlPanel(snapshot.data)
-      );
+      stream: BlocProvider.of<BlDevicesBlocBloc>(context).independentLedsStatesStream,
+      initialData: {LedState(name: "EMPTY")},
+      builder: (context, snapshot) => buildIndependentControlPanel(snapshot.data, context));
 }
 
 Widget buildGroupControler(BuildContext context) {
   return StreamBuilder(
       stream: BlocProvider.of<BlDevicesBlocBloc>(context).groupLedsStatesStream,
-      initialData: {LedState("EMPTY")},
-      builder: (context, snapshot) => buildControlPanel(snapshot.data)
+      initialData: {LedState(name: "EMPTY")},
+      builder: (context, snapshot) => buildControlPanel(snapshot.data, context));
+}
+
+Widget buildSidePanel(Set<LedState> ledStates, BuildContext context) {}
+
+Widget buildIndependentControlPanel(Set<LedState> ledStates, BuildContext context) {
+ // final MediaQueryData queryDat = MediaQuery.of(context);
+
+  return Center(
+    child: CircleColorPicker(
+      initialColor: Colors.white,
+      size: const Size(240, 240),
+      strokeWidth: 4,
+      thumbSize: 36,
+      onChanged: (value) {
+        
+      },
+    ),
   );
 }
 
-Widget buildSidePanel(Set<LedState> ledStates){
-
-}
-
-Widget buildIndependentControlPanel(Set<LedState> ledStates){
-  
-}
-
-Widget buildControlPanel(Set<LedState> ledStates){
-   
-}
+Widget buildControlPanel(Set<LedState> ledStates, BuildContext context) {}

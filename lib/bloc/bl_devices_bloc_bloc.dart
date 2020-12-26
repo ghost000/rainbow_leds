@@ -41,7 +41,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
                   .where((element) => element.name == scanResult.device.name)
                   .isEmpty) {
             add(BlDevicesBlocEventAddToNotAssigned(
-                LedState(scanResult.device.name)));
+                LedState(name:scanResult.device.name)));
           }
         }
       });

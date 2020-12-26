@@ -1,14 +1,22 @@
-import 'package:equatable/equatable.dart';
-import 'package:flutter/painting.dart';
+//import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
-class LedState extends Equatable {
+typedef Color MaterialColor();
+
+class LedState{//} extends Equatable {
   final String name;
-  final Color
+  Color color;
 
-  LedState(String name) : this.name = name ?? '';
+  LedState({String name, Color color})
+      : this.name = name ?? '',
+        this.color = color ?? Color(0xFFFFFFFF);
 
-  @override
-  List<Object> get props => [name];
+  void changeColor(Color newColor) {
+    this.color = newColor;
+  }
+
+  // @override
+  // List<Object> get props => [name];
 
   @override
   String toString() {
