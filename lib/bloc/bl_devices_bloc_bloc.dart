@@ -1,10 +1,11 @@
-import 'dart:async';
+//import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rainbow_leds/bloc/ledState.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:rxdart/rxdart.dart';
 
 part 'bl_devices_bloc_event.dart';
 part 'bl_devices_bloc_state.dart';
@@ -20,28 +21,23 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
 
   BehaviorSubject<Set<LedState>> _groupLedsStates = BehaviorSubject.seeded({});
   Stream<Set<LedState>> get groupLedsStatesStream => _groupLedsStates.stream;
-  BehaviorSubject<Set<LedState>> _independentLedsStates =
-      BehaviorSubject.seeded({});
-  Stream<Set<LedState>> get independentLedsStatesStream =>
-      _independentLedsStates.stream;
-  BehaviorSubject<Set<LedState>> _notAssignedLedsStates =
-      BehaviorSubject.seeded({});
-  Stream<Set<LedState>> get notAssignedLedsStatesStream =>
-      _notAssignedLedsStates.stream;
+  BehaviorSubject<Set<LedState>> _independentLedsStates = BehaviorSubject.seeded({});
+  Stream<Set<LedState>> get independentLedsStatesStream => _independentLedsStates.stream;
+  BehaviorSubject<Set<LedState>> _notAssignedLedsStates = BehaviorSubject.seeded({});
+  Stream<Set<LedState>> get notAssignedLedsStatesStream => _notAssignedLedsStates.stream;
 
   listenFlutterBlue() {
     FlutterBlue.instance.scanResults.listen((event) {
       event.forEach((scanResult) {
-        if (scanResult.device.name != null &&
-            scanResult.device.name.isNotEmpty) {
+        if (scanResult.device.id.id != null && scanResult.device.id.id.isNotEmpty) {
           if (groupLedsStates
-                  .where((element) => element.name == scanResult.device.name)
+                  .where((element) => element.name == scanResult.device.id.id)
                   .isEmpty &&
               independentLedsStates
-                  .where((element) => element.name == scanResult.device.name)
+                  .where((element) => element.name == scanResult.device.id.id)
                   .isEmpty) {
             add(BlDevicesBlocEventAddToNotAssigned(
-                LedState(name: scanResult.device.name)));
+                LedState(name: scanResult.device.id.id)));
           }
         }
       });
@@ -84,9 +80,9 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
     } else if (event is BlDevicesBlocEventScan) {
       yield BlDevicesBlocStateScan(); // add scaning in this state [FEATURE]
     } else if (event is BlDevicesBlocEventUpdateIndependent) {
-      yield* _mapLedStateRemovedFromNotAssignedToState(event);
+      yield* _mapLedStateUpdateIndependent(event);
     } else if (event is BlDevicesBlocEventUpdateGroup) {
-      yield* _mapLedStateRemovedFromNotAssignedToState(event);
+      yield* _mapLedStateUpdateGroup(event);
     }
   }
 
@@ -151,10 +147,6 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       _notAssignedLedsStates.add(notAssignedLedsStates);
       _independentLedsStates.add(independentLedsStates);
       _groupLedsStates.add(groupLedsStates);
-      print(independentLedsStates);
-      print(groupLedsStates);
-      print(notAssignedLedsStates);
-
       yield BlDevicesBlocStateLoadNotAssigned(notAssignedLedsStates.toList());
     } catch (_) {
       yield BlDevicesBlocStateLoadFailure();
@@ -172,14 +164,51 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
     }
   }
 
-  Stream<BlDevicesBlocState> _mapLedStateUpdateIindependent(
-      BlDevicesBlocEventRemoveFromNotAssigned event) async* {
+  Stream<BlDevicesBlocState> _mapLedStateUpdateIndependent(
+      BlDevicesBlocEventUpdateIndependent event) async* {
     try {
-      notAssignedLedsStates.remove(event.ledState);
-      _notAssignedLedsStates.add(notAssignedLedsStates);
-      yield BlDevicesBlocStateLoadNotAssigned(notAssignedLedsStates.toList());
+      print(event);
+      independentLedsStates.map((ledState) {
+        if (ledState.name == event.ledState.name) {
+          updateLeStateParam(event.ledState, ledState);
+        }
+      });
+      _independentLedsStates.add(independentLedsStates);
+      yield BlDevicesBlocStateUpdateIndependent(independentLedsStates.toList());
     } catch (_) {
       yield BlDevicesBlocStateLoadFailure();
+    }
+  }
+
+  Stream<BlDevicesBlocState> _mapLedStateUpdateGroup(
+      BlDevicesBlocEventUpdateGroup event) async* {
+    try {
+      print(event);
+      groupLedsStates.map((ledState) {
+        updateLeStateParam(event.ledState, ledState);
+      });
+      _groupLedsStates.add(groupLedsStates);
+      yield BlDevicesBlocStateUpdateGroup(groupLedsStates.toList());
+    } catch (_) {
+      yield BlDevicesBlocStateLoadFailure();
+    }
+  }
+
+  void updateLeStateParam(LedState eventLedState, LedState ledState) {
+    if (eventLedState.characteristic != null &&
+        eventLedState.characteristic != ledState.characteristic) {
+      ledState.setCharacteristic = eventLedState.characteristic;
+    }
+    if (eventLedState.color != null &&
+        eventLedState.color != Color(0xFFFFFFFF) &&
+        eventLedState.color != ledState.color) {
+      ledState.setColor = eventLedState.color;
+      print(eventLedState.color);
+    }
+    if (eventLedState.state != null &&
+        eventLedState.state != States.empty &&
+        eventLedState.state != ledState.state) {
+      ledState.setState = eventLedState.state;
     }
   }
 }

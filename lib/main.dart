@@ -28,28 +28,26 @@ class RainbowLedsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Rainbow leds app',
-        theme: ThemeData(
-          primarySwatch: Colors.amber,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: Padding(
-          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-          child: BlocBuilder<AppStateBlocBloc, AppStateBlocState>(
-            builder: (context, state) {
-              if (state is AppStateBlocInitial) {
-                //return MyHomePage(title: 'Rainbow leds app');
-                return FindDevicesScreen();
-              } else if (state is AppStateBlocGroup) {
-                return FindDevicesScreen();
-              } else if (state is AppStateBlocBluetoothOff) {
-                return BluetoothOffScreen();
-              } else if (state is AppStateBlocControl) {
-                return ControlPanelScreen();
-              }
-              return CircularProgressIndicator();
-            },
-          ),
-        ));
+      title: 'Rainbow leds app',
+      theme: ThemeData(
+        primarySwatch: Colors.amber,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: BlocBuilder<AppStateBlocBloc, AppStateBlocState>(
+        builder: (context, state) {
+          if (state is AppStateBlocInitial) {
+            //return MyHomePage(title: 'Rainbow leds app');
+            return FindDevicesScreen();
+          } else if (state is AppStateBlocGroup) {
+            return FindDevicesScreen();
+          } else if (state is AppStateBlocBluetoothOff) {
+            return BluetoothOffScreen();
+          } else if (state is AppStateBlocControl) {
+            return ControlPanelScreen();
+          }
+          return CircularProgressIndicator();
+        },
+      ),
+    );
   }
 }

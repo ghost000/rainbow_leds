@@ -1,9 +1,8 @@
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter/material.dart';
 
-typedef Color MaterialColor();
-
 enum States {
+  empty,
   disabled,
   whiteRGB,
   whiteCool,
@@ -30,7 +29,13 @@ class LedState {
       : this.name = name ?? '',
         this.color = color ?? Color(0xFFFFFFFF),
         this.characteristic = characteristic ?? null,
-        this.state = state ?? States.disabled;
+        this.state = state ?? States.empty;
+
+  @override
+  bool operator ==(other) => other.name == this.name;
+
+  @override
+  int get hashCode => this.name.hashCode;
 
   Color get getColor => color;
   String get getName => name;
@@ -41,7 +46,7 @@ class LedState {
 
   set setName(String newName) => this.name = newName ?? '';
 
-  set setState(States newState) => this.state = newState ?? States.disabled;
+  set setState(States newState) => this.state = newState ?? States.empty;
 
   set setCharacteristic(BluetoothCharacteristic characteristic) {
     if (characteristic != null) {

@@ -8,14 +8,17 @@ enum LedStateEnum { group, notAssigned, independent }
 class FindDevicesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: AppBar(
-        title: Text("Find devices"),
+    return Padding(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Find devices"),
+        ),
+        backgroundColor: Colors.lightBlue,
+        body: buildRefreshIndicator(context),
+        floatingActionButton:
+            buildfloatingActionButton(context), //buildStreamBuilder(context),
       ),
-      backgroundColor: Colors.lightBlue,
-      body: buildRefreshIndicator(context),
-      floatingActionButton:
-          buildfloatingActionButton(context), //buildStreamBuilder(context),
     );
   }
 }
@@ -65,7 +68,7 @@ Widget buildRefreshIndicator(BuildContext context) {
 Widget buildScanResultsColumn(Set<LedState> scanResults,
     LedStateEnum ledStateEnum, BuildContext context) {
   return Column(children: <Widget>[
-    new Divider(color: Colors.blue),
+    Divider(color: Colors.blue),
     ...scanResults.map((scanResult) {
       print(scanResult.toString()); //debug print
       return buildTextAndButtons(scanResult, ledStateEnum, context);
@@ -76,15 +79,13 @@ Widget buildScanResultsColumn(Set<LedState> scanResults,
 Widget buildTextAndButtons(
     LedState scanResult, LedStateEnum ledStateEnum, BuildContext context) {
   final String name = scanResult.name.toString();
-  return new Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        new Align(
-          child: new Text("$name"),
-          alignment: FractionalOffset.topLeft,
-        ),
-        ...buildButtons(scanResult, ledStateEnum, context),
-      ]);
+  return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+    Align(
+      child: Text("$name"),
+      alignment: FractionalOffset.topLeft,
+    ),
+    ...buildButtons(scanResult, ledStateEnum, context),
+  ]);
 }
 
 List<Widget> buildButtons(
@@ -107,41 +108,41 @@ List<Widget> buildButtons(
 }
 
 Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
-  return new Align(
-    child: new FlatButton(
+  return Align(
+    child: FlatButton(
       onPressed: () {
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
             BlDevicesBlocEventAddToIndependent(
                 LedState(name: scanResult.name)));
       },
-      child: new Text("ADD independent"),
+      child: Text("ADD independent"),
     ),
     alignment: Alignment.centerRight,
   );
 }
 
 Widget buildGroupFlatButton(LedState scanResult, BuildContext context) {
-  return new Align(
-    child: new FlatButton(
+  return Align(
+    child: FlatButton(
       onPressed: () {
         BlocProvider.of<BlDevicesBlocBloc>(context)
             .add(BlDevicesBlocEventAddToGroup(LedState(name: scanResult.name)));
       },
-      child: new Text("ADD Group"),
+      child: Text("ADD Group"),
     ),
     alignment: FractionalOffset.topRight,
   );
 }
 
 Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
-  return new Align(
-    child: new FlatButton(
+  return Align(
+    child: FlatButton(
       onPressed: () {
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
             BlDevicesBlocEventAddToNotAssigned(
                 LedState(name: scanResult.name)));
       },
-      child: new Text("ADD NotAssigned"),
+      child: Text("ADD NotAssigned"),
     ),
     alignment: FractionalOffset.topRight,
   );
