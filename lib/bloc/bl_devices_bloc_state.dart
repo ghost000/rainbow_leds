@@ -95,6 +95,32 @@ class BlDevicesBlocStateLoadNotAssigned extends BlDevicesBlocState {
       'BlDevicesBlocStateLoadNotAssigned { ledStates: $ledStates }';
 }
 
+class BlDevicesBlocStateUpdateIndependent extends BlDevicesBlocState {
+  final List<LedState> ledStates;
+
+  const BlDevicesBlocStateUpdateIndependent([this.ledStates = const []]);
+
+  @override
+  List<Object> get props => [ledStates];
+
+  @override
+  String toString() =>
+      'BlDevicesBlocStateUpdateIndependent { ledStates: $ledStates }';
+}
+
+class BlDevicesBlocStateUpdateGroup extends BlDevicesBlocState {
+  final List<LedState> ledStates;
+
+  const BlDevicesBlocStateUpdateGroup([this.ledStates = const []]);
+
+  @override
+  List<Object> get props => [ledStates];
+
+  @override
+  String toString() =>
+      'BlDevicesBlocStateUpdateGroup { ledStates: $ledStates }';
+}
+
 class BlDevicesBlocStateLoadFailure extends BlDevicesBlocState {
   @override
   String toString() => 'BlDevicesBlocStateLoadFailure';

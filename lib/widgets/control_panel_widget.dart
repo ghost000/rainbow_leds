@@ -32,22 +32,25 @@ class ControlPanelScreen extends StatelessWidget {
 
 Widget buildIndependentControler(BuildContext context) {
   return StreamBuilder(
-      stream: BlocProvider.of<BlDevicesBlocBloc>(context).independentLedsStatesStream,
+      stream: BlocProvider.of<BlDevicesBlocBloc>(context)
+          .independentLedsStatesStream,
       initialData: {LedState(name: "EMPTY")},
-      builder: (context, snapshot) => buildIndependentControlPanel(snapshot.data, context));
+      builder: (context, snapshot) =>
+          buildIndependentControlPanel(snapshot.data, context));
 }
 
 Widget buildGroupControler(BuildContext context) {
   return StreamBuilder(
       stream: BlocProvider.of<BlDevicesBlocBloc>(context).groupLedsStatesStream,
       initialData: {LedState(name: "EMPTY")},
-      builder: (context, snapshot) => buildControlPanel(snapshot.data, context));
+      builder: (context, snapshot) =>
+          buildControlPanel(snapshot.data, context));
 }
 
 Widget buildSidePanel(Set<LedState> ledStates, BuildContext context) {}
 
-Widget buildIndependentControlPanel(Set<LedState> ledStates, BuildContext context) {
- // final MediaQueryData queryDat = MediaQuery.of(context);
+Widget buildIndependentControlPanel(LedState ledState, BuildContext context) {
+  // final MediaQueryData queryDat = MediaQuery.of(context);
 
   return Center(
     child: CircleColorPicker(
@@ -56,7 +59,8 @@ Widget buildIndependentControlPanel(Set<LedState> ledStates, BuildContext contex
       strokeWidth: 4,
       thumbSize: 36,
       onChanged: (value) {
-        
+        BlocProvider.of<BlDevicesBlocBloc>(context)
+            .add(BlDevicesBlocEventAddToGroup(LedState(name: scanResult.name)));
       },
     ),
   );

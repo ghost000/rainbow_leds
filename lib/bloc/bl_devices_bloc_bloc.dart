@@ -41,7 +41,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
                   .where((element) => element.name == scanResult.device.name)
                   .isEmpty) {
             add(BlDevicesBlocEventAddToNotAssigned(
-                LedState(name:scanResult.device.name)));
+                LedState(name: scanResult.device.name)));
           }
         }
       });
@@ -83,6 +83,10 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       yield BlDevicesBlocStateInitial();
     } else if (event is BlDevicesBlocEventScan) {
       yield BlDevicesBlocStateScan(); // add scaning in this state [FEATURE]
+    } else if (event is BlDevicesBlocEventUpdateIndependent) {
+      yield* _mapLedStateRemovedFromNotAssignedToState(event);
+    } else if (event is BlDevicesBlocEventUpdateGroup) {
+      yield* _mapLedStateRemovedFromNotAssignedToState(event);
     }
   }
 
@@ -158,6 +162,17 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
   }
 
   Stream<BlDevicesBlocState> _mapLedStateRemovedFromNotAssignedToState(
+      BlDevicesBlocEventRemoveFromNotAssigned event) async* {
+    try {
+      notAssignedLedsStates.remove(event.ledState);
+      _notAssignedLedsStates.add(notAssignedLedsStates);
+      yield BlDevicesBlocStateLoadNotAssigned(notAssignedLedsStates.toList());
+    } catch (_) {
+      yield BlDevicesBlocStateLoadFailure();
+    }
+  }
+
+  Stream<BlDevicesBlocState> _mapLedStateUpdateIindependent(
       BlDevicesBlocEventRemoveFromNotAssigned event) async* {
     try {
       notAssignedLedsStates.remove(event.ledState);

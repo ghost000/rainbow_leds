@@ -125,3 +125,31 @@ class BlDevicesBlocEventRemoveFromNotAssigned extends BlDevicesBlocEvent {
     return 'BlDevicesBlocEventRemoveFromNotAssigned ledState: $ledState';
   }
 }
+
+class BlDevicesBlocEventUpdateIndependent extends BlDevicesBlocEvent {
+  final LedState ledState;
+
+  const BlDevicesBlocEventUpdateIndependent(this.ledState);
+
+  @override
+  List<Object> get props => [ledState];
+
+  @override
+  String toString() {
+    return 'BlDevicesBlocEventUpdateIndependent ledState: $ledState';
+  }
+}
+
+class BlDevicesBlocEventUpdateGroup extends BlDevicesBlocEvent {
+  final LedState ledState;
+
+  const BlDevicesBlocEventUpdateGroup(this.ledState);
+
+  @override
+  List<Object> get props => [ledState];
+
+  @override
+  String toString() {
+    return 'BlDevicesBlocEventUpdateGroup ledState: $ledState';
+  }
+}
