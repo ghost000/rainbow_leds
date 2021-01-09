@@ -8,6 +8,9 @@ import 'package:rainbow_leds/widgets/bluetooth_off_screen.dart';
 class MyHomePage extends StatelessWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => MyHomePage());
+  }
 
   @override
   Widget build(BuildContext context) {

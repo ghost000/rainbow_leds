@@ -1,0 +1,278 @@
+import "dart:isolate";
+import 'dart:async';
+import 'dart:typed_data';
+
+import 'package:flutter_blue/flutter_blue.dart';
+import 'package:rainbow_leds/bloc/ledState.dart';
+import 'package:flutter/material.dart';
+
+class LightManager {
+  BluetoothCharacteristic characteristic;
+  BluetoothDevice bluetoothDevice;
+  List sectionList;
+  Map statesToFonctionMap;
+  ReceivePort receivePort;
+  Isolate isolate;
+  int color;
+  bool isUp;
+  int iter;
+  bool running;
+  int colorRGBFlafe;
+
+  LightManager(
+      {BluetoothCharacteristic characteristic, BluetoothDevice bluetoothDevice})
+      : this.characteristic = characteristic ?? null,
+        this.bluetoothDevice = bluetoothDevice ?? null {
+    statesToFonctionMap = {
+      //States.scan              : (  ){ light.scan();                                                      },
+      //States.connect           : (  ){ light.connect(  );                                           },
+      States.rgb: ({Color color}) {
+        sendPacket(0xa1, color);
+      },
+      States.whiteCoolGradual: ({int degree}) {
+        sendPacketWhite(degree, 0);
+      },
+      States.whiteRGBGradual: ({int degree}) {
+        sendPacketWhite(0, degree);
+      },
+      States.whiteCoolAndWarmGradual: ({int degree}) {
+        sendPacketWhite(degree, degree);
+      },
+      States.whiteRGB: () {
+        sendPacket(0xa1, Color.fromARGB(255, 255, 255, 255));
+      },
+      States.whiteCool: () {
+        sendPacketWhite(99, 0);
+      },
+      States.whiteWarm: () {
+        sendPacketWhite(0, 99);
+      },
+      States.whiteCoolAndWarm: () {
+        sendPacketWhite(99, 99);
+      },
+      States.disable: () {
+        sendPacket(0xa1, Color.fromARGB(255, 0, 0, 0));
+      },
+      States.rgbFlare: () {
+        updateRGBRainbow();
+      },
+      States.stroboStrongWhite: () {
+        stroboStrongWhite();
+      },
+      States.strobo: () {
+        strobo();
+      },
+      States.police: () {
+        police();
+      },
+      States.connect: () {
+        connect();
+      },
+      States.disconnect: () {
+        disconnect();
+      },
+    };
+
+    sectionList = [
+      [1, 0, 0],
+      [1, 1, 0],
+      [0, 1, 0],
+      [0, 1, 1],
+      [0, 0, 1],
+      [1, 0, 1],
+    ];
+
+    colorRGBFlafe = 0;
+    color = 0;
+    isUp = true;
+    iter = 0;
+    running = false;
+  }
+
+  @override
+  String toString() {
+    return 'LightManager BluetoothCharacteristic: $characteristic, BluetoothDevice: $bluetoothDevice.';
+  }
+
+  BluetoothCharacteristic get getCharacteristic => characteristic;
+  BluetoothDevice get getBluetoothDevice => bluetoothDevice;
+
+  set setCharacteristic(BluetoothCharacteristic characteristic) {
+    if (characteristic != null) {
+      this.characteristic = characteristic;
+    }
+    print("characteristic == null"); //debug print
+  }
+
+  set setBluetoothDevice(BluetoothDevice bluetoothDevice) {
+    if (bluetoothDevice != null) {
+      this.bluetoothDevice = bluetoothDevice;
+    }
+    print("bluetoothDevice == null"); //debug print
+  }
+
+  sendPacket(int cmd, Color color) async {
+    var buffer = Uint8List(6).buffer;
+    var bdata = ByteData.view(buffer);
+    bdata.setUint8(0, 0xAE);
+    bdata.setUint8(1, cmd);
+    bdata.setUint8(2, color.red);
+    bdata.setUint8(3, color.green);
+    bdata.setUint8(4, color.blue);
+    bdata.setUint8(5, 0x56);
+
+    print(bdata.buffer.asUint8List()); //debug print
+
+    characteristic.write(bdata.buffer.asUint8List(), withoutResponse: true);
+  }
+
+  sendPacketWhite(int coolWhite, int warmWhite) async {
+    var buffer = Uint8List(6).buffer;
+    var bdata = ByteData.view(buffer);
+    bdata.setUint8(0, 0xAE);
+    bdata.setUint8(1, 0xAA);
+    bdata.setUint8(2, 0x01);
+    bdata.setUint8(3, coolWhite);
+    bdata.setUint8(4, warmWhite);
+    bdata.setUint8(5, 0x56);
+
+    print(bdata.buffer.asUint8List()); //debug print
+
+    characteristic.write(bdata.buffer.asUint8List(), withoutResponse: true);
+  }
+
+  updateRGBRainbow() {
+    var section = sectionList[(color / 255).floor()];
+    var nextSection = sectionList[(color / 255).floor() + 1 < sectionList.length
+        ? (color / 255).floor() + 1
+        : 0];
+    var rgb = [0, 0, 0];
+
+    for (int j = 0; j < 3; j++) {
+      if (section[j] == nextSection[j]) {
+        rgb[j] = section[j] * 255;
+      } else if (section[j] > nextSection[j]) {
+        rgb[j] = 255 - (color % 255).round();
+      } else {
+        rgb[j] = (color % 255).round();
+      }
+    }
+
+    sendPacket(0xa1, Color.fromARGB(255, rgb[0], rgb[1], rgb[2]));
+
+    if (isUp) {
+      color += 1;
+      if (iter == 255 * 5) {
+        isUp = false;
+        iter = 0;
+      }
+    } else {
+      color -= 1;
+      if (iter == 255 * 5) {
+        isUp = true;
+        iter = 0;
+      }
+    }
+    iter += 1;
+  }
+
+  stroboStrongWhite() {
+    if (iter % 2 == 0) {
+      iter += 1;
+      sendPacketWhite(99, 99);
+    } else {
+      iter -= 1;
+      sendPacketWhite(0, 0);
+    }
+  }
+
+  strobo() {
+    if (iter % 2 == 0) {
+      iter += 1;
+      sendPacket(0xa1, Color.fromARGB(255, 255, 255, 255));
+    } else {
+      iter -= 1;
+      sendPacket(0xa1, Color.fromARGB(255, 0, 0, 0));
+    }
+  }
+
+  police() {
+    if (iter % 2 == 0) {
+      iter += 1;
+      sendPacket(0xa1, Color.fromARGB(255, 255, 0, 0));
+    } else {
+      iter -= 1;
+      sendPacket(0xa1, Color.fromARGB(255, 0, 0, 255));
+    }
+  }
+
+  disconnect() async {
+    bluetoothDevice.disconnect();
+  }
+
+  connect() async {
+    bluetoothDevice.connect();
+  }
+
+  changeStateAndUpdate(States newState, Color color, int degree) async {
+    clearIsolateIfNeeded();
+
+    if (checkNewStateForGradualStates(newState)) {
+      running = false;
+      statesToFonctionMap[newState](degree: degree);
+    } else if (newState == States.rgb) {
+      running = false;
+      statesToFonctionMap[newState](color: color);
+    } else if (checkNewStateForExpandedStates(newState)) {
+      resetFlare();
+
+      isolate = await Isolate.spawn(flareFakeUpdate, receivePort.sendPort);
+      receivePort.listen((data) {
+        statesToFonctionMap[newState]();
+      });
+    } else {
+      running = false;
+      statesToFonctionMap[newState]();
+    }
+  }
+
+  static flareFakeUpdate(SendPort sendPort) async {
+    Timer.periodic(Duration(milliseconds: 30), (Timer t) {
+      sendPort.send("0");
+    });
+  }
+
+  clearIsolateIfNeeded() {
+    if (running && isolate != null) {
+      running = false;
+      receivePort.close();
+      isolate.kill(priority: Isolate.immediate);
+      isolate = null;
+    }
+  }
+
+  bool checkNewStateForExpandedStates(States newState) {
+    return newState == States.rgbFlare ||
+            newState == States.police ||
+            newState == States.strobo ||
+            newState == States.stroboStrongWhite
+        ? true
+        : false;
+  }
+
+  bool checkNewStateForGradualStates(States newState) {
+    return newState == States.whiteRGBGradual ||
+            newState == States.whiteCoolGradual ||
+            newState == States.whiteCoolAndWarmGradual
+        ? true
+        : false;
+  }
+
+  resetFlare() {
+    running = true;
+    colorRGBFlafe = 0;
+    isUp = true;
+    iter = 0;
+    receivePort = ReceivePort();
+  }
+}

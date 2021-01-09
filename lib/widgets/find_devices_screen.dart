@@ -2,25 +2,79 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rainbow_leds/bloc/blocs.dart';
+import 'package:rainbow_leds/widgets/bluetooth_off_screen.dart';
 
 enum LedStateEnum { group, notAssigned, independent }
 
 class FindDevicesScreen extends StatelessWidget {
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => FindDevicesScreen());
+  }
+
+  // FindDevicesScreen({this.statebl});
+  // final BluetoothState statebl;
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Find devices"),
-        ),
-        backgroundColor: Colors.lightBlue,
-        body: buildRefreshIndicator(context),
-        floatingActionButton:
-            buildfloatingActionButton(context), //buildStreamBuilder(context),
-      ),
-    );
+    // if (statebl != BluetoothState.on) {
+    //   //BlocProvider.of<AppStateBlocBloc>(context).add(AppStateBlocEventGroup());
+    //   // myCallback(() {
+    //   //   print("gggggggggggggggggggggggggggggggggggggggggggggggggggggg");
+    //   //   Navigator.of(context).pushNamed('/BluetoothOffScreen');
+
+    //   //   BlocProvider.of<AppStateBlocBloc>(context).add(AppStateBlocEventGroup());
+    //   // });
+
+    //   BlocProvider.of<AppStateBlocBloc>(context).add(AppStateBlocEventBluetoothOff());
+    // }
+    //listenState(context);
+    //BlocProvider.of<AppStateBlocBloc>(context).listenFlutterBlue();
+    return BlocListener<AppStateBlocBloc, AppStateBlocState>(
+        cubit: BlocProvider.of<AppStateBlocBloc>(context),
+        listener: (context, state) {
+          // if (state is AppStateBlocBluetoothOff) {
+          //   Navigator.of(context).pushNamed('/BluetoothOffScreen', arguments:  );
+          // } else
+          if (state is AppStateBlocControl) {
+            Navigator.of(context).pushNamed('/ControlPanelScreen');
+          }
+          // else if (state is AppStateBlocGroup) {
+          //   Navigator.of(context).pop();
+          // }
+        },
+        child: StreamBuilder<BluetoothState>(
+            stream: FlutterBlue.instance.state,
+            initialData: BluetoothState.unknown,
+            builder: (context, snapshot) {
+              if (snapshot.data != BluetoothState.on) {
+                //  BlocProvider.of<AppStateBlocBloc>(context).add(AppStateBlocEventGroup());
+                // myCallback(() {
+                //   print("rrrrrrrrrrrrrrrrrrrr");
+                //   Navigator.of(context)
+                //       .pushNamed('/BluetoothOffScreen', arguments: snapshot.data);
+                // });
+                //BlocProvider.of<AppStateBlocBloc>(context).add(AppStateBlocEventBluetoothOff());
+                return BluetoothOffScreen(state: snapshot.data);
+              }
+              return Padding(
+                padding:
+                    EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                child: Scaffold(
+                  appBar: AppBar(
+                    title: Text("Find devices"),
+                  ),
+                  backgroundColor: Colors.lightBlue,
+                  body: buildRefreshIndicator(context),
+                  floatingActionButton: buildfloatingActionButton(
+                      context), //buildStreamBuilder(context),
+                ),
+              );
+            }));
   }
+//         )
+//     );
+//   }
+// }
 }
 
 Widget buildRefreshIndicator(BuildContext context) {
@@ -112,8 +166,10 @@ Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
     child: FlatButton(
       onPressed: () {
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
-            BlDevicesBlocEventAddToIndependent(
-                LedState(name: scanResult.name)));
+            BlDevicesBlocEventAddToIndependent(LedState(
+                name: scanResult.name,
+                characteristic: scanResult.getCharacteristic,
+                bluetoothDevice: scanResult.getBluetoothDevice)));
       },
       child: Text("ADD independent"),
     ),
@@ -125,8 +181,11 @@ Widget buildGroupFlatButton(LedState scanResult, BuildContext context) {
   return Align(
     child: FlatButton(
       onPressed: () {
-        BlocProvider.of<BlDevicesBlocBloc>(context)
-            .add(BlDevicesBlocEventAddToGroup(LedState(name: scanResult.name)));
+        BlocProvider.of<BlDevicesBlocBloc>(context).add(
+            BlDevicesBlocEventAddToGroup(LedState(
+                name: scanResult.name,
+                characteristic: scanResult.getCharacteristic,
+                bluetoothDevice: scanResult.getBluetoothDevice)));
       },
       child: Text("ADD Group"),
     ),
@@ -139,8 +198,10 @@ Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
     child: FlatButton(
       onPressed: () {
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
-            BlDevicesBlocEventAddToNotAssigned(
-                LedState(name: scanResult.name)));
+            BlDevicesBlocEventAddToNotAssigned(LedState(
+                name: scanResult.name,
+                characteristic: scanResult.getCharacteristic,
+                bluetoothDevice: scanResult.getBluetoothDevice)));
       },
       child: Text("ADD NotAssigned"),
     ),
@@ -174,8 +235,27 @@ Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
 Widget buildfloatingActionButton(BuildContext context) {
   return FloatingActionButton(
     child: Icon(Icons.stop),
+    // onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
+    //     .add(AppStateBlocEventControl()),
     onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
         .add(AppStateBlocEventControl()),
     backgroundColor: Colors.blue,
   );
+}
+
+listenState(context) {
+  FlutterBlue.instance.state.listen((event) {
+    if (event == BluetoothState.on) {
+      BlocProvider.of<AppStateBlocBloc>(context).add(AppStateBlocEventGroup());
+    } else {
+      BlocProvider.of<AppStateBlocBloc>(context)
+          .add(AppStateBlocEventBluetoothOff());
+    }
+  });
+}
+
+void myCallback(Function callback) {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    callback();
+  });
 }
