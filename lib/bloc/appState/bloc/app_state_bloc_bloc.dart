@@ -1,29 +1,13 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-//import 'package:rxdart/rxdart.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 
 part 'app_state_bloc_event.dart';
 part 'app_state_bloc_state.dart';
 
 class AppStateBlocBloc extends Bloc<AppStateBlocEvent, AppStateBlocState> {
-  AppStateBlocBloc() : super(AppStateBlocInitial()) {
-    //listenFlutterBlue();
-  }
-
-  // FlutterBlue flutterBlue = FlutterBlue.instance;
-
-  // listenFlutterBlue() {
-  //   flutterBlue.state.listen((event) {
-  //     if (event == BluetoothState.on) {
-  //       add(AppStateBlocEventGroup());
-  //     } else {
-  //       add(AppStateBlocEventBluetoothOff());
-  //     }
-  //   });
-  // }
+  AppStateBlocBloc() : super(AppStateBlocInitial());
 
   @override
   Stream<AppStateBlocState> mapEventToState(

@@ -8,16 +8,6 @@ import 'package:rainbow_leds/widgets/bluetooth_off_screen.dart';
 class ControlPanelScreen extends StatefulWidget {
   final _ControlPanelScreenState state = _ControlPanelScreenState();
 
-  // ControlPanelScreen({this.statebl});
-  //  ControlPanelScreen({ Key key, this.statebl }) : super(key: key);
-  // final BluetoothState statebl;
-
-  //get BluetoothState statebl => statebl;
-
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => ControlPanelScreen());
-  }
-
   @override
   _ControlPanelScreenState createState() => state;
 }
@@ -29,89 +19,50 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // if (widget.statebl != BluetoothState.on) {
-    //   //BlocProvider.of<AppStateBlocBloc>(context).add(AppStateBlocEventGroup());
-    //   // myCallback(() {
-    //   //   print("gggggggggggggggggggggggggggggggggggggggggggggggggggggg");
-    //   //   Navigator.of(context).pushNamed('/BluetoothOffScreen');
-
-    //   //   BlocProvider.of<AppStateBlocBloc>(context).add(AppStateBlocEventGroup());
-    //   // });
-
-    //     BlocProvider.of<AppStateBlocBloc>(context).add(AppStateBlocEventBluetoothOff());
-    // }
-    //listenState(context);
-    //BlocProvider.of<AppStateBlocBloc>(context).listenFlutterBlue();
-    return BlocListener<AppStateBlocBloc, AppStateBlocState>(
-        cubit: BlocProvider.of<AppStateBlocBloc>(context),
-        listener: (context, state) {
-          // if (state is AppStateBlocBluetoothOff) {
-          //   Navigator.of(context).pushNamed('/BluetoothOffScreen');
-          // } else
-          if (state is AppStateBlocGroup) {
-            Navigator.of(context).pushNamed('/ControlPanelScreen');
+    return StreamBuilder<BluetoothState>(
+        stream: FlutterBlue.instance.state,
+        initialData: BluetoothState.unknown,
+        builder: (context, snapshot) {
+          if (snapshot.data != BluetoothState.on) {
+            return BluetoothOffScreen(state: snapshot.data);
           }
-          // else if (state is AppStateBlocGroup) {
-          //   Navigator.of(context).pop();
-          // }
-        },
-        child: StreamBuilder<BluetoothState>(
-            stream: FlutterBlue.instance.state,
-            initialData: BluetoothState.unknown,
-            builder: (context, snapshot) {
-              if (snapshot.data != BluetoothState.on) {
-                //BlocProvider.of<AppStateBlocBloc>(context).add(AppStateBlocEventGroup());
-                // myCallback(() {
-                //   print("gggggggggggggggggggggggggggggggggggggggggggggggggggggg");
-                //   Navigator.of(context).pushNamed('/BluetoothOffScreen');
+          return WillPopScope(
+            onWillPop: () {
+              BlocProvider.of<AppStateBlocBloc>(context)
+                  .add(AppStateBlocEventGroup());
 
-                //   BlocProvider.of<AppStateBlocBloc>(context).add(AppStateBlocEventGroup());
-                // });
-
-                // BlocProvider.of<AppStateBlocBloc>(context).add(AppStateBlocEventBluetoothOff());
-                return BluetoothOffScreen(state: snapshot.data);
-              }
-              return WillPopScope(
-                onWillPop: () {
-                  BlocProvider.of<AppStateBlocBloc>(context)
-                      .add(AppStateBlocEventGroup());
-
-                  Navigator.of(context).pop();
-                  return Future.value(true);
-                },
-                child: Padding(
-                  padding:
-                      EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                  child: DefaultTabController(
-                      length: 2,
-                      child: Scaffold(
-                        appBar: AppBar(
-                          bottom: TabBar(
-                            tabs: [
-                              Tab(
-                                icon: Icon(Icons.format_italic),
-                              ),
-                              Tab(
-                                icon: Icon(Icons.format_list_numbered),
-                              )
-                            ],
+              Navigator.of(context).pop();
+              return Future.value(true);
+            },
+            child: Padding(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+              child: DefaultTabController(
+                  length: 2,
+                  child: Scaffold(
+                    appBar: AppBar(
+                      bottom: TabBar(
+                        tabs: [
+                          Tab(
+                            icon: Icon(Icons.format_italic),
                           ),
-                          title: Text("Control Panel"),
-                        ),
-                        body: TabBarView(
-                            physics: NeverScrollableScrollPhysics(),
-                            children: [
-                              buildIndependentControler(context),
-                              buildGroupControler(context),
-                            ]),
-                      )),
-                ),
-              );
-            }));
+                          Tab(
+                            icon: Icon(Icons.format_list_numbered),
+                          )
+                        ],
+                      ),
+                      title: Text("Control Panel"),
+                    ),
+                    body: TabBarView(
+                        physics: NeverScrollableScrollPhysics(),
+                        children: [
+                          buildIndependentControler(context),
+                          buildGroupControler(context),
+                        ]),
+                  )),
+            ),
+          );
+        });
   }
-  //       )
-  //       );
-  // }
 
   Widget buildGroupColorPanel(BuildContext context) {
     return Center(
@@ -200,21 +151,4 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
     return buildIndependentColorPanel(
         context); //ledState: ledStates.first, context: context);
   }
-}
-
-listenState(context) {
-  FlutterBlue.instance.state.listen((event) {
-    if (event == BluetoothState.on) {
-      BlocProvider.of<AppStateBlocBloc>(context).add(AppStateBlocEventGroup());
-    } else {
-      BlocProvider.of<AppStateBlocBloc>(context)
-          .add(AppStateBlocEventBluetoothOff());
-    }
-  });
-}
-
-void myCallback(Function callback) {
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    callback();
-  });
 }

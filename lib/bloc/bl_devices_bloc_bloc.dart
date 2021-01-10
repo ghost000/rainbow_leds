@@ -1,11 +1,8 @@
-//import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rainbow_leds/bloc/ledState.dart';
-//import 'package:rainbow_leds/bl_manager/light_manager.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
 part 'bl_devices_bloc_event.dart';
