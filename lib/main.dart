@@ -35,9 +35,15 @@ class _RainbowLedsApp extends State<RainbowLedsApp> {
       title: 'Rainbow leds app',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.amber,
+        brightness: Brightness.light,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        /* light theme settings */
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        /* dark theme settings */
+      ),
+      themeMode: ThemeMode.dark,
       routes: {
         '/': (context) => FindDevicesScreen(),
         '/BluetoothOffScreen': (context) => BluetoothOffScreen(),

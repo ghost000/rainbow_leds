@@ -125,3 +125,27 @@ class BlDevicesBlocStateLoadFailure extends BlDevicesBlocState {
   @override
   String toString() => 'BlDevicesBlocStateLoadFailure';
 }
+
+class BlDevicesBlocStateConnect extends BlDevicesBlocState {
+  final List<LedState> ledStates;
+
+  const BlDevicesBlocStateConnect([this.ledStates = const []]);
+
+  @override
+  List<Object> get props => [ledStates];
+
+  @override
+  String toString() => 'BlDevicesBlocStateConnect { ledStates: $ledStates }';
+}
+
+class BlDevicesBlocStateDisconnect extends BlDevicesBlocState {
+  final List<LedState> ledStates;
+
+  const BlDevicesBlocStateDisconnect([this.ledStates = const []]);
+
+  @override
+  List<Object> get props => [ledStates];
+
+  @override
+  String toString() => 'BlDevicesBlocStateDisconnect { ledStates: $ledStates }';
+}

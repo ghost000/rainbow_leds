@@ -20,7 +20,7 @@ class Light {
 
 class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
   BlDevicesBlocBloc() : super(BlDevicesBlocStateInitial()) {
-    listenFlutterBlue();
+    listenFlutterBlueDebug();
   }
 
   String transmitUuid = "f000aa61-0451-4000-b000-000000000000";
@@ -38,6 +38,31 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       BehaviorSubject.seeded({});
   Stream<Set<LedState>> get notAssignedLedsStatesStream =>
       _notAssignedLedsStates.stream;
+
+  listenFlutterBlueDebug() async {
+    FlutterBlue.instance.scanResults.listen((event) async {
+      event.forEach((scanResult) async {
+        if (scanResult.device.id.id != null &&
+                scanResult.device.id.id.isNotEmpty //&&
+            //scanResult.device.name.contains('YONGNUO')) { // !Imtortant search case for releasing. I will add console argument to manage this.
+            ) {
+          if (groupLedsStates
+                  .where((element) => element.name == scanResult.device.id.id)
+                  .isEmpty &&
+              independentLedsStates
+                  .where((element) => element.name == scanResult.device.id.id)
+                  .isEmpty &&
+              notAssignedLedsStates
+                  .where((element) => element.name == scanResult.device.id.id)
+                  .isEmpty) {
+            add(BlDevicesBlocEventAddToNotAssigned(LedState(
+                name: scanResult.device.id.id,
+                bluetoothDevice: scanResult.device)));
+          }
+        }
+      });
+    });
+  }
 
   listenFlutterBlue() async {
     FlutterBlue.instance.scanResults.listen((event) async {
@@ -130,6 +155,10 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       yield* _mapLedStateUpdateIndependent(event);
     } else if (event is BlDevicesBlocEventUpdateGroup) {
       yield* _mapLedStateUpdateGroup(event);
+    } else if (event is BlDevicesBlocEventConnect) {
+      yield* _mapLedStateConnect(event);
+    } else if (event is BlDevicesBlocEventDisconnect) {
+      yield* _mapLedStateDisconnect(event);
     }
   }
 
@@ -234,6 +263,64 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       });
       _groupLedsStates.add(groupLedsStates);
       yield BlDevicesBlocStateUpdateGroup(groupLedsStates.toList());
+    } catch (_) {
+      yield BlDevicesBlocStateLoadFailure();
+    }
+  }
+
+  Stream<BlDevicesBlocState> _mapLedStateConnect(
+      BlDevicesBlocEventConnect event) async* {
+    try {
+      BluetoothCharacteristic characteristic;
+      await event.ledState.getBluetoothDevice.connect();
+      await event.ledState.getBluetoothDevice.discoverServices().then((value) {
+        value.forEach((element) {
+          element.characteristics.forEach((element) {
+            if (element.uuid.toString() == transmitUuid) {
+              characteristic = element;
+              if (event.groupOrIndependent == GroupOrIndependent.group) {
+                groupLedsStates
+                    .where((element) => element.name == event.ledState.name)
+                    .first
+                    .setCharacteristic = characteristic;
+              } else if (event.groupOrIndependent ==
+                  GroupOrIndependent.independent) {
+                independentLedsStates
+                    .where((element) => element.name == event.ledState.name)
+                    .first
+                    .setCharacteristic = characteristic;
+              }
+            }
+          });
+        });
+      });
+      if (event.groupOrIndependent == GroupOrIndependent.group) {
+        yield BlDevicesBlocStateConnect(groupLedsStates.toList());
+      } else if (event.groupOrIndependent == GroupOrIndependent.independent) {
+        yield BlDevicesBlocStateConnect(independentLedsStates.toList());
+      }
+    } catch (_) {
+      yield BlDevicesBlocStateLoadFailure();
+    }
+  }
+
+  Stream<BlDevicesBlocState> _mapLedStateDisconnect(
+      BlDevicesBlocEventDisconnect event) async* {
+    try {
+      await event.ledState.getBluetoothDevice.disconnect();
+      if (event.groupOrIndependent == GroupOrIndependent.group) {
+        // groupLedsStates.remove(event.ledState);
+        // _groupLedsStates.add(groupLedsStates);
+        // notAssignedLedsStates.add(event.ledState);
+        // _notAssignedLedsStates.add(notAssignedLedsStates);
+        yield BlDevicesBlocStateDisconnect(groupLedsStates.toList());
+      } else if (event.groupOrIndependent == GroupOrIndependent.independent) {
+        // independentLedsStates.remove(event.ledState);
+        // _independentLedsStates.add(independentLedsStates);
+        // notAssignedLedsStates.add(event.ledState);
+        // _notAssignedLedsStates.add(notAssignedLedsStates);
+        yield BlDevicesBlocStateDisconnect(independentLedsStates.toList());
+      }
     } catch (_) {
       yield BlDevicesBlocStateLoadFailure();
     }

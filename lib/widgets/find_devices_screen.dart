@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rainbow_leds/bloc/blocs.dart';
 import 'package:rainbow_leds/widgets/bluetooth_off_screen.dart';
 
-enum LedStateEnum { group, notAssigned, independent }
-
 class FindDevicesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -30,10 +28,19 @@ class FindDevicesScreen extends StatelessWidget {
                   appBar: AppBar(
                     title: Text("Find devices"),
                   ),
-                  backgroundColor: Colors.lightBlue,
+                  //backgroundColor: Colors.lightBlue,
                   body: buildRefreshIndicator(context),
+                  bottomNavigationBar: BottomAppBar(
+                    shape: const CircularNotchedRectangle(),
+                    child: Container(
+                      height: 50.0,
+                    ),
+                  ),
                   floatingActionButton: buildfloatingActionButton(
                       context), //buildStreamBuilder(context),
+
+                  floatingActionButtonLocation:
+                      FloatingActionButtonLocation.centerDocked,
                 ),
               );
             }));
@@ -85,7 +92,7 @@ Widget buildRefreshIndicator(BuildContext context) {
 Widget buildScanResultsColumn(Set<LedState> scanResults,
     LedStateEnum ledStateEnum, BuildContext context) {
   return Column(children: <Widget>[
-    Divider(color: Colors.blue),
+    Divider(color: Colors.black),
     ...scanResults.map((scanResult) {
       print(scanResult.toString()); //debug print
       return buildTextAndButtons(scanResult, ledStateEnum, context);
@@ -96,12 +103,20 @@ Widget buildScanResultsColumn(Set<LedState> scanResults,
 Widget buildTextAndButtons(
     LedState scanResult, LedStateEnum ledStateEnum, BuildContext context) {
   final String name = scanResult.name.toString();
-  return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-    Align(
-      child: Text("$name"),
-      alignment: FractionalOffset.topLeft,
+  return Column(children: <Widget>[
+    Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Align(
+          child: Text("$name"),
+          alignment: FractionalOffset.topLeft,
+        )
+      ],
     ),
-    ...buildButtons(scanResult, ledStateEnum, context),
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: buildButtons(scanResult, ledStateEnum, context),
+    )
   ]);
 }
 
@@ -111,11 +126,15 @@ List<Widget> buildButtons(
   if (ledStateEnum == LedStateEnum.group) {
     widgetList
       ..add(buildIndependentFlatButton(scanResult, context))
-      ..add(buildNotAssignedFlatButton(scanResult, context));
+      ..add(buildNotAssignedFlatButton(scanResult, context))
+      ..add(buildConnectDisconnectFlatButton(
+          scanResult, context, GroupOrIndependent.group));
   } else if (ledStateEnum == LedStateEnum.independent) {
     widgetList
       ..add(buildGroupFlatButton(scanResult, context))
-      ..add(buildNotAssignedFlatButton(scanResult, context));
+      ..add(buildNotAssignedFlatButton(scanResult, context))
+      ..add(buildConnectDisconnectFlatButton(
+          scanResult, context, GroupOrIndependent.independent));
   } else if (ledStateEnum == LedStateEnum.notAssigned) {
     widgetList
       ..add(buildGroupFlatButton(scanResult, context))
@@ -127,6 +146,10 @@ List<Widget> buildButtons(
 Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
   return Align(
     child: FlatButton(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          side: BorderSide(color: Colors.cyan)),
+      color: Colors.cyanAccent,
       onPressed: () {
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
             BlDevicesBlocEventAddToIndependent(LedState(
@@ -143,6 +166,10 @@ Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
 Widget buildGroupFlatButton(LedState scanResult, BuildContext context) {
   return Align(
     child: FlatButton(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          side: BorderSide(color: Colors.amber)),
+      color: Colors.amberAccent,
       onPressed: () {
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
             BlDevicesBlocEventAddToGroup(LedState(
@@ -159,6 +186,10 @@ Widget buildGroupFlatButton(LedState scanResult, BuildContext context) {
 Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
   return Align(
     child: FlatButton(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          side: BorderSide(color: Colors.purple)),
+      color: Colors.purpleAccent,
       onPressed: () {
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
             BlDevicesBlocEventAddToNotAssigned(LedState(
@@ -172,11 +203,57 @@ Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
   );
 }
 
-// StreamBuilder<bool> buildStreamBuilder(BuildContext context) {
+Widget buildConnectDisconnectFlatButton(LedState scanResult,
+    BuildContext context, GroupOrIndependent groupOrIndependent) {
+  if (scanResult.getBluetoothDevice != null) {
+    return StreamBuilder<BluetoothDeviceState>(
+        stream: scanResult.getBluetoothDevice.state,
+        initialData: BluetoothDeviceState.disconnected,
+        builder: (context, snapshot) {
+          if (snapshot.data == BluetoothDeviceState.disconnected) {
+            return Align(
+              child: FlatButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    side: BorderSide(color: Colors.green)),
+                color: Colors.greenAccent,
+                onPressed: () {
+                  BlocProvider.of<BlDevicesBlocBloc>(context).add(
+                      BlDevicesBlocEventConnect(
+                          scanResult, groupOrIndependent));
+                },
+                child: Text("Connect"),
+              ),
+              alignment: FractionalOffset.topRight,
+            );
+          } else {
+            return Align(
+              child: FlatButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    side: BorderSide(color: Colors.red)),
+                color: Colors.redAccent,
+                onPressed: () {
+                  BlocProvider.of<BlDevicesBlocBloc>(context).add(
+                      BlDevicesBlocEventDisconnect(
+                          scanResult, groupOrIndependent));
+                },
+                child: Text("Disconnect"),
+              ),
+              alignment: FractionalOffset.topRight,
+            );
+          }
+        });
+  } else {
+    return Divider(color: Colors.transparent);
+  }
+}
+
+// StreamBuilder<bool> buildStreamBuilder(BuildContext context, Stream<bool> boolStream, Widget buildFlatButton(bool scanResult, BuildContext context)) {
 //   return StreamBuilder<bool>(
-//     stream: FlutterBlue.instance.isScanning,
+//     stream: boolStream,
 //     initialData: false,
-//     builder: (context, snapshot) => buildfloatingActionButton(snapshot.data, context),
+//     builder: (context, snapshot) => buildFlatButton, context),
 //   );
 // }
 
@@ -197,9 +274,12 @@ Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
 
 Widget buildfloatingActionButton(BuildContext context) {
   return FloatingActionButton(
-    child: Icon(Icons.stop),
+    child: Icon(
+      Icons.design_services,
+      size: 35,
+    ),
     onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
         .add(AppStateBlocEventControl()),
-    backgroundColor: Colors.blue,
+    backgroundColor: Colors.white60,
   );
 }

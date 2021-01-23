@@ -2,6 +2,8 @@ import 'package:rainbow_leds/bl_manager/light_manager.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter/material.dart';
 
+enum LedStateEnum { group, notAssigned, independent }
+
 enum States {
   empty,
   disable,

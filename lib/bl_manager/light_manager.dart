@@ -1,5 +1,5 @@
-import "dart:isolate";
 import 'dart:async';
+import "dart:isolate";
 import 'dart:typed_data';
 
 import 'package:flutter_blue/flutter_blue.dart';
@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 class LightManager {
   BluetoothCharacteristic characteristic;
   BluetoothDevice bluetoothDevice;
-  List sectionList;
+  List<List<int>> sectionList;
   Map statesToFonctionMap;
   ReceivePort receivePort;
   Isolate isolate;
@@ -21,8 +21,8 @@ class LightManager {
 
   LightManager(
       {BluetoothCharacteristic characteristic, BluetoothDevice bluetoothDevice})
-      : this.characteristic = characteristic ?? null,
-        this.bluetoothDevice = bluetoothDevice ?? null {
+      : characteristic = characteristic ?? null,
+        bluetoothDevice = bluetoothDevice ?? null {
     statesToFonctionMap = {
       //States.scan              : (  ){ light.scan();                                                      },
       //States.connect           : (  ){ light.connect(  );                                           },
@@ -39,7 +39,7 @@ class LightManager {
         sendPacketWhite(degree, degree);
       },
       States.whiteRGB: () {
-        sendPacket(0xa1, Color.fromARGB(255, 255, 255, 255));
+        sendPacket(0xa1, const Color.fromARGB(255, 255, 255, 255));
       },
       States.whiteCool: () {
         sendPacketWhite(99, 0);
@@ -51,7 +51,7 @@ class LightManager {
         sendPacketWhite(99, 99);
       },
       States.disable: () {
-        sendPacket(0xa1, Color.fromARGB(255, 0, 0, 0));
+        sendPacket(0xa1, const Color.fromARGB(255, 0, 0, 0));
       },
       States.rgbFlare: () {
         updateRGBRainbow();
@@ -111,9 +111,9 @@ class LightManager {
     print("bluetoothDevice == null"); //debug print
   }
 
-  sendPacket(int cmd, Color color) async {
-    var buffer = Uint8List(6).buffer;
-    var bdata = ByteData.view(buffer);
+  void sendPacket(int cmd, Color color) async {
+    final buffer = Uint8List(6).buffer;
+    final bdata = ByteData.view(buffer);
     bdata.setUint8(0, 0xAE);
     bdata.setUint8(1, cmd);
     bdata.setUint8(2, color.red);
@@ -141,12 +141,13 @@ class LightManager {
     characteristic.write(bdata.buffer.asUint8List(), withoutResponse: true);
   }
 
-  updateRGBRainbow() {
-    var section = sectionList[(color / 255).floor()];
-    var nextSection = sectionList[(color / 255).floor() + 1 < sectionList.length
-        ? (color / 255).floor() + 1
-        : 0];
-    var rgb = [0, 0, 0];
+  void updateRGBRainbow() {
+    final section = sectionList[(color / 255).floor()];
+    final nextSection = sectionList[
+        (color / 255).floor() + 1 < sectionList.length
+            ? (color / 255).floor() + 1
+            : 0];
+    List<int> rgb = [0, 0, 0];
 
     for (int j = 0; j < 3; j++) {
       if (section[j] == nextSection[j]) {

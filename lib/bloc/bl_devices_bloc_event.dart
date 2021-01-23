@@ -1,5 +1,7 @@
 part of 'bl_devices_bloc_bloc.dart';
 
+enum GroupOrIndependent { group, independent }
+
 abstract class BlDevicesBlocEvent extends Equatable {
   const BlDevicesBlocEvent();
 
@@ -151,5 +153,35 @@ class BlDevicesBlocEventUpdateGroup extends BlDevicesBlocEvent {
   @override
   String toString() {
     return 'BlDevicesBlocEventUpdateGroup ledState: $ledState';
+  }
+}
+
+class BlDevicesBlocEventConnect extends BlDevicesBlocEvent {
+  final LedState ledState;
+  final GroupOrIndependent groupOrIndependent;
+
+  const BlDevicesBlocEventConnect(this.ledState, this.groupOrIndependent);
+
+  @override
+  List<Object> get props => [ledState, groupOrIndependent];
+
+  @override
+  String toString() {
+    return 'BlDevicesBlocEventConnect ledState: $ledState';
+  }
+}
+
+class BlDevicesBlocEventDisconnect extends BlDevicesBlocEvent {
+  final LedState ledState;
+  final GroupOrIndependent groupOrIndependent;
+
+  const BlDevicesBlocEventDisconnect(this.ledState, this.groupOrIndependent);
+
+  @override
+  List<Object> get props => [ledState, groupOrIndependent];
+
+  @override
+  String toString() {
+    return 'BlDevicesBlocEventDisconnect ledState: $ledState';
   }
 }
