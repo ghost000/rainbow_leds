@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
-import 'package:rainbow_leds/bloc/ledState.dart';
+import 'package:rainbow_leds/bloc/led_state.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
 part 'bl_devices_bloc_event.dart';
@@ -28,23 +28,24 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
   Set<LedState> independentLedsStates = {};
   Set<LedState> notAssignedLedsStates = {};
 
-  BehaviorSubject<Set<LedState>> _groupLedsStates = BehaviorSubject.seeded({});
+  final BehaviorSubject<Set<LedState>> _groupLedsStates =
+      BehaviorSubject.seeded({});
   Stream<Set<LedState>> get groupLedsStatesStream => _groupLedsStates.stream;
-  BehaviorSubject<Set<LedState>> _independentLedsStates =
+  final BehaviorSubject<Set<LedState>> _independentLedsStates =
       BehaviorSubject.seeded({});
   Stream<Set<LedState>> get independentLedsStatesStream =>
       _independentLedsStates.stream;
-  BehaviorSubject<Set<LedState>> _notAssignedLedsStates =
+  final BehaviorSubject<Set<LedState>> _notAssignedLedsStates =
       BehaviorSubject.seeded({});
   Stream<Set<LedState>> get notAssignedLedsStatesStream =>
       _notAssignedLedsStates.stream;
 
-  listenFlutterBlueDebug() async {
+  Future<void> listenFlutterBlueDebug() async {
     FlutterBlue.instance.scanResults.listen((event) async {
-      event.forEach((scanResult) async {
+      for (final scanResult in event) {
         if (scanResult.device.id.id != null &&
                 scanResult.device.id.id.isNotEmpty //&&
-            //scanResult.device.name.contains('YONGNUO')) { // !Imtortant search case for releasing. I will add console argument to manage this.
+            //scanResult.device.name.contains('YONGNUO')) { // TODO search case for releasing. I will add console argument to manage this.
             ) {
           if (groupLedsStates
                   .where((element) => element.name == scanResult.device.id.id)
@@ -60,63 +61,60 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
                 bluetoothDevice: scanResult.device)));
           }
         }
-      });
+      }
     });
   }
 
-  listenFlutterBlue() async {
-    FlutterBlue.instance.scanResults.listen((event) async {
-      event.forEach((scanResult) async {
-        if (scanResult.device.id.id != null &&
-            scanResult.device.id.id.isNotEmpty &&
-            scanResult.device.name.contains('YONGNUO')) {
-          BluetoothCharacteristic characteristic;
-          await scanResult.device.connect();
-          await scanResult.device.discoverServices().then((value) {
-            value.forEach((element) {
-              element.characteristics.forEach((element) {
-                if (element.uuid.toString() == transmitUuid) {
-                  characteristic = element;
-                  if (groupLedsStates
-                          .where((element) =>
-                              element.name == scanResult.device.id.id)
-                          .isEmpty &&
-                      independentLedsStates
-                          .where((element) =>
-                              element.name == scanResult.device.id.id)
-                          .isEmpty &&
-                      notAssignedLedsStates
-                          .where((element) =>
-                              element.name == scanResult.device.id.id)
-                          .isEmpty) {
-                    add(BlDevicesBlocEventAddToNotAssigned(LedState(
-                        name: scanResult.device.id.id,
-                        characteristic: characteristic,
-                        bluetoothDevice: scanResult.device)));
-                  }
-                }
-              });
-            });
-          });
-        }
-      });
-    });
-  }
+  // Future<void> listenFlutterBlue() async {
+  //   FlutterBlue.instance.scanResults.listen((event) async {
+  //     for (final scanResult in event) {
+  //       if (scanResult.device.id.id != null &&
+  //           scanResult.device.id.id.isNotEmpty &&
+  //           scanResult.device.name.contains('YONGNUO')) {
+  //         BluetoothCharacteristic characteristic;
+  //         await scanResult.device.connect();
+  //         await scanResult.device.discoverServices().then((value) {
+  //           value.forEach((element) {
+  //             element.characteristics.forEach((element) {
+  //               if (element.uuid.toString() == transmitUuid) {
+  //                 characteristic = element;
+  //                 if (groupLedsStates
+  //                         .where((element) => element.name == scanResult.device.id.id)
+  //                         .isEmpty &&
+  //                     independentLedsStates
+  //                         .where((element) => element.name == scanResult.device.id.id)
+  //                         .isEmpty &&
+  //                     notAssignedLedsStates
+  //                         .where((element) => element.name == scanResult.device.id.id)
+  //                         .isEmpty) {
+  //                   add(BlDevicesBlocEventAddToNotAssigned(LedState(
+  //                       name: scanResult.device.id.id,
+  //                       characteristic: characteristic,
+  //                       bluetoothDevice: scanResult.device)));
+  //                 }
+  //               }
+  //             });
+  //           });
+  //         });
+  //       }
+  //     }
+  //   });
+  // }
 
   @override
   Future<void> close() {
-    groupLedsStates.forEach((element) {
+    for (final element in groupLedsStates) {
       element.setState = States.disconnect;
       element.updateLightManager();
-    });
-    independentLedsStates.forEach((element) {
+    }
+    for (final element in independentLedsStates) {
       element.setState = States.disconnect;
       element.updateLightManager();
-    });
-    notAssignedLedsStates.forEach((element) {
+    }
+    for (final element in notAssignedLedsStates) {
       element.setState = States.disconnect;
       element.updateLightManager();
-    });
+    }
 
     _groupLedsStates.close();
     _independentLedsStates.close();
@@ -243,11 +241,11 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
   Stream<BlDevicesBlocState> _mapLedStateUpdateIndependent(
       BlDevicesBlocEventUpdateIndependent event) async* {
     try {
-      independentLedsStates.forEach((ledState) {
+      for (final ledState in independentLedsStates) {
         if (ledState.name == event.ledState.name) {
           updateLeStateParam(event.ledState, ledState);
         }
-      });
+      }
       _independentLedsStates.add(independentLedsStates);
       yield BlDevicesBlocStateUpdateIndependent(independentLedsStates.toList());
     } catch (_) {
@@ -258,9 +256,9 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
   Stream<BlDevicesBlocState> _mapLedStateUpdateGroup(
       BlDevicesBlocEventUpdateGroup event) async* {
     try {
-      groupLedsStates.forEach((ledState) {
+      for (final ledState in groupLedsStates) {
         updateLeStateParam(event.ledState, ledState);
-      });
+      }
       _groupLedsStates.add(groupLedsStates);
       yield BlDevicesBlocStateUpdateGroup(groupLedsStates.toList());
     } catch (_) {
@@ -274,25 +272,27 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       BluetoothCharacteristic characteristic;
       await event.ledState.getBluetoothDevice.connect();
       await event.ledState.getBluetoothDevice.discoverServices().then((value) {
-        value.forEach((element) {
-          element.characteristics.forEach((element) {
-            if (element.uuid.toString() == transmitUuid) {
-              characteristic = element;
+        for (final element in value) {
+          for (final characteristicElement in element.characteristics) {
+            if (characteristicElement.uuid.toString() == transmitUuid) {
+              characteristic = characteristicElement;
               if (event.groupOrIndependent == GroupOrIndependent.group) {
                 groupLedsStates
-                    .where((element) => element.name == event.ledState.name)
+                    .where((characteristicElement) =>
+                        characteristicElement.name == event.ledState.name)
                     .first
                     .setCharacteristic = characteristic;
               } else if (event.groupOrIndependent ==
                   GroupOrIndependent.independent) {
                 independentLedsStates
-                    .where((element) => element.name == event.ledState.name)
+                    .where((characteristicElement) =>
+                        characteristicElement.name == event.ledState.name)
                     .first
                     .setCharacteristic = characteristic;
               }
             }
-          });
-        });
+          }
+        }
       });
       if (event.groupOrIndependent == GroupOrIndependent.group) {
         yield BlDevicesBlocStateConnect(groupLedsStates.toList());
@@ -307,6 +307,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
   Stream<BlDevicesBlocState> _mapLedStateDisconnect(
       BlDevicesBlocEventDisconnect event) async* {
     try {
+      //TODO implement removing ledState afetr disconnect
       await event.ledState.getBluetoothDevice.disconnect();
       if (event.groupOrIndependent == GroupOrIndependent.group) {
         // groupLedsStates.remove(event.ledState);
@@ -328,19 +329,26 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
 
   void updateLeStateParam(LedState eventLedState, LedState ledState) {
     bool update = false;
+    if (eventLedState.activeInIndependent != null &&
+        eventLedState.activeInIndependent != ledState.activeInIndependent &&
+        eventLedState.state == States.active) {
+      ledState.activeInIndependent = eventLedState.activeInIndependent;
+      update = false;
+    }
     if (eventLedState.getCharacteristic != null &&
         eventLedState.getCharacteristic != ledState.getCharacteristic) {
       ledState.setCharacteristic = eventLedState.getCharacteristic;
     }
     if (eventLedState.color != null &&
-        eventLedState.color != Color(0xFFFFFFFF) &&
+        eventLedState.color != const Color(0xFFFFFFFF) &&
         eventLedState.color != ledState.color) {
-      ledState.setColor = eventLedState.color;
+      ledState.color = eventLedState.color;
       update = true;
     }
     if (eventLedState.state != null &&
         eventLedState.state != States.empty &&
-        eventLedState.state != ledState.state) {
+        eventLedState.state != ledState.state &&
+        eventLedState.state != States.active) {
       ledState.setState = eventLedState.state;
       update = true;
     }

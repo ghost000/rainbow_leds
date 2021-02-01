@@ -20,7 +20,8 @@ enum States {
   police,
   rgbFlare,
   disconnect,
-  connect
+  connect,
+  active
 }
 
 class LedState {
@@ -29,27 +30,31 @@ class LedState {
   States state;
   LightManager lightManager;
   int degree;
+  bool activeInIndependent;
 
   LedState(
       {String name,
       Color color,
       BluetoothCharacteristic characteristic,
       States state,
-      BluetoothDevice bluetoothDevice})
-      : this.name = name ?? '',
-        this.color = color ?? Color(0xFF000000),
-        this.state = state ?? States.empty {
-    this.lightManager = LightManager();
-    this.lightManager.setCharacteristic = characteristic;
-    this.lightManager.setBluetoothDevice = bluetoothDevice;
+      int degree,
+      BluetoothDevice bluetoothDevice,
+      bool active})
+      : name = name ?? '',
+        color = color ?? const Color(0xFF000000),
+        degree = degree ?? 0,
+        state = state ?? States.empty,
+        activeInIndependent = active ?? false {
+    lightManager = LightManager(characteristic, bluetoothDevice);
+    lightManager.setCharacteristic = characteristic;
+    lightManager.setBluetoothDevice = bluetoothDevice;
   }
 
   @override
-  bool operator ==(other) =>
-      other.name == this.name && other.color == this.color;
+  bool operator ==(dynamic other) => other.name == name && other.color == color;
 
   @override
-  int get hashCode => this.name.hashCode + this.color.hashCode;
+  int get hashCode => name.hashCode + color.hashCode;
 
   Color get getColor => color;
   String get getName => name;
@@ -59,30 +64,38 @@ class LedState {
   BluetoothDevice get getBluetoothDevice => lightManager.getBluetoothDevice;
   int get getDegree => degree;
 
-  set setColor(Color newColor) => this.color = newColor ?? Color(0xFFFFFFFF);
+  set setColor(Color newColor) => color = newColor ?? const Color(0xFFFFFFFF);
 
-  set setName(String newName) => this.name = newName ?? '';
+  set setName(String newName) => name = newName ?? '';
 
-  set setState(States newState) => this.state = newState ?? States.empty;
+  set setState(States newState) => state = newState ?? States.empty;
 
   set setCharacteristic(BluetoothCharacteristic characteristic) {
     if (characteristic != null) {
-      this.lightManager.setCharacteristic = characteristic;
+      lightManager.setCharacteristic = characteristic;
     }
     print("characteristic == null"); //debug print
   }
 
   set setBluetoothDevice(BluetoothDevice bluetoothDevice) {
     if (bluetoothDevice != null) {
-      this.lightManager.setBluetoothDevice = bluetoothDevice;
+      lightManager.setBluetoothDevice = bluetoothDevice;
     }
     print("bluetoothDevice == null"); //debug print
   }
 
-  set setDegree(int degree) => this.degree = degree;
-
-  updateLightManager() {
+  void updateLightManager() {
     lightManager.changeStateAndUpdate(state, color, degree);
+  }
+
+  bool get getActive => activeInIndependent;
+
+  void setActiveInIndependent() {
+    activeInIndependent = true;
+  }
+
+  void setDeactivateInIndependent() {
+    activeInIndependent = false;
   }
 
   @override

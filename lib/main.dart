@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:rainbow_leds/bloc/blocs.dart';
-import 'package:rainbow_leds/widgets/find_devices_screen.dart';
-import 'package:rainbow_leds/widgets/bluetooth_off_screen.dart';
-import 'package:rainbow_leds/widgets/control_panel_widget.dart';
+import 'package:rainbow_leds/screens/find_devices_screen.dart';
+import 'package:rainbow_leds/screens/bluetooth_off_screen.dart';
+import 'package:rainbow_leds/screens/control_panel_screen.dart';
 
 void main() {
   Bloc.observer = SimpleBlocObserver();
@@ -37,16 +37,14 @@ class _RainbowLedsApp extends State<RainbowLedsApp> {
       theme: ThemeData(
         brightness: Brightness.light,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        /* light theme settings */
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        /* dark theme settings */
       ),
       themeMode: ThemeMode.dark,
       routes: {
         '/': (context) => FindDevicesScreen(),
-        '/BluetoothOffScreen': (context) => BluetoothOffScreen(),
+        '/BluetoothOffScreen': (context) => const BluetoothOffScreen(),
         '/ControlPanelScreen': (context) => ControlPanelScreen(),
       },
       initialRoute: '/',

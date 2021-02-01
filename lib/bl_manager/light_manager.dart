@@ -3,7 +3,7 @@ import "dart:isolate";
 import 'dart:typed_data';
 
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:rainbow_leds/bloc/ledState.dart';
+import 'package:rainbow_leds/bloc/led_state.dart';
 import 'package:flutter/material.dart';
 
 class LightManager {
@@ -19,13 +19,9 @@ class LightManager {
   bool running;
   int colorRGBFlafe;
 
-  LightManager(
-      {BluetoothCharacteristic characteristic, BluetoothDevice bluetoothDevice})
-      : characteristic = characteristic ?? null,
-        bluetoothDevice = bluetoothDevice ?? null {
+  LightManager(this.characteristic, this.bluetoothDevice) {
     statesToFonctionMap = {
       //States.scan              : (  ){ light.scan();                                                      },
-      //States.connect           : (  ){ light.connect(  );                                           },
       States.rgb: ({Color color}) {
         sendPacket(0xa1, color);
       },
@@ -95,7 +91,6 @@ class LightManager {
   }
 
   BluetoothCharacteristic get getCharacteristic => characteristic;
-  BluetoothDevice get getBluetoothDevice => bluetoothDevice;
 
   set setCharacteristic(BluetoothCharacteristic characteristic) {
     if (characteristic != null) {
@@ -104,6 +99,8 @@ class LightManager {
     print("characteristic == null"); //debug print
   }
 
+  BluetoothDevice get getBluetoothDevice => bluetoothDevice;
+
   set setBluetoothDevice(BluetoothDevice bluetoothDevice) {
     if (bluetoothDevice != null) {
       this.bluetoothDevice = bluetoothDevice;
@@ -111,7 +108,7 @@ class LightManager {
     print("bluetoothDevice == null"); //debug print
   }
 
-  void sendPacket(int cmd, Color color) async {
+  Future<void> sendPacket(int cmd, Color color) async {
     final buffer = Uint8List(6).buffer;
     final bdata = ByteData.view(buffer);
     bdata.setUint8(0, 0xAE);
@@ -126,9 +123,9 @@ class LightManager {
     characteristic.write(bdata.buffer.asUint8List(), withoutResponse: true);
   }
 
-  sendPacketWhite(int coolWhite, int warmWhite) async {
-    var buffer = Uint8List(6).buffer;
-    var bdata = ByteData.view(buffer);
+  Future<void> sendPacketWhite(int coolWhite, int warmWhite) async {
+    final buffer = Uint8List(6).buffer;
+    final bdata = ByteData.view(buffer);
     bdata.setUint8(0, 0xAE);
     bdata.setUint8(1, 0xAA);
     bdata.setUint8(2, 0x01);
@@ -147,7 +144,7 @@ class LightManager {
         (color / 255).floor() + 1 < sectionList.length
             ? (color / 255).floor() + 1
             : 0];
-    List<int> rgb = [0, 0, 0];
+    final List<int> rgb = [0, 0, 0];
 
     for (int j = 0; j < 3; j++) {
       if (section[j] == nextSection[j]) {
@@ -177,7 +174,7 @@ class LightManager {
     iter += 1;
   }
 
-  stroboStrongWhite() {
+  void stroboStrongWhite() {
     if (iter % 2 == 0) {
       iter += 1;
       sendPacketWhite(99, 99);
@@ -187,35 +184,36 @@ class LightManager {
     }
   }
 
-  strobo() {
+  void strobo() {
     if (iter % 2 == 0) {
       iter += 1;
-      sendPacket(0xa1, Color.fromARGB(255, 255, 255, 255));
+      sendPacket(0xa1, const Color.fromARGB(255, 255, 255, 255));
     } else {
       iter -= 1;
-      sendPacket(0xa1, Color.fromARGB(255, 0, 0, 0));
+      sendPacket(0xa1, const Color.fromARGB(255, 0, 0, 0));
     }
   }
 
-  police() {
+  void police() {
     if (iter % 2 == 0) {
       iter += 1;
-      sendPacket(0xa1, Color.fromARGB(255, 255, 0, 0));
+      sendPacket(0xa1, const Color.fromARGB(255, 255, 0, 0));
     } else {
       iter -= 1;
-      sendPacket(0xa1, Color.fromARGB(255, 0, 0, 255));
+      sendPacket(0xa1, const Color.fromARGB(255, 0, 0, 255));
     }
   }
 
-  disconnect() async {
+  Future<void> disconnect() async {
     bluetoothDevice.disconnect();
   }
 
-  connect() async {
+  Future<void> connect() async {
     bluetoothDevice.connect();
   }
 
-  changeStateAndUpdate(States newState, Color color, int degree) async {
+  Future<void> changeStateAndUpdate(
+      States newState, Color color, int degree) async {
     clearIsolateIfNeeded();
 
     if (checkNewStateForGradualStates(newState)) {
@@ -237,13 +235,13 @@ class LightManager {
     }
   }
 
-  static flareFakeUpdate(SendPort sendPort) async {
-    Timer.periodic(Duration(milliseconds: 30), (Timer t) {
+  static Future<void> flareFakeUpdate(SendPort sendPort) async {
+    Timer.periodic(const Duration(milliseconds: 30), (Timer t) {
       sendPort.send("0");
     });
   }
 
-  clearIsolateIfNeeded() {
+  void clearIsolateIfNeeded() {
     if (running && isolate != null) {
       running = false;
       receivePort.close();
@@ -254,22 +252,18 @@ class LightManager {
 
   bool checkNewStateForExpandedStates(States newState) {
     return newState == States.rgbFlare ||
-            newState == States.police ||
-            newState == States.strobo ||
-            newState == States.stroboStrongWhite
-        ? true
-        : false;
+        newState == States.police ||
+        newState == States.strobo ||
+        newState == States.stroboStrongWhite;
   }
 
   bool checkNewStateForGradualStates(States newState) {
     return newState == States.whiteRGBGradual ||
-            newState == States.whiteCoolGradual ||
-            newState == States.whiteCoolAndWarmGradual
-        ? true
-        : false;
+        newState == States.whiteCoolGradual ||
+        newState == States.whiteCoolAndWarmGradual;
   }
 
-  resetFlare() {
+  void resetFlare() {
     running = true;
     colorRGBFlafe = 0;
     isUp = true;
