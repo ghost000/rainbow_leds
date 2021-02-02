@@ -35,9 +35,7 @@ class FindDevicesScreen extends StatelessWidget {
                       height: 50.0,
                     ),
                   ),
-                  floatingActionButton: buildfloatingActionButton(
-                      context),
-
+                  floatingActionButton: buildfloatingActionButton(context),
                   floatingActionButtonLocation:
                       FloatingActionButtonLocation.centerDocked,
                 ),

@@ -58,8 +58,7 @@ class LedState {
 
   Color get ledColor => color;
   String get ledName => name;
-  BluetoothCharacteristic get ledCharacteristic =>
-      lightManager.characteristic;
+  BluetoothCharacteristic get ledCharacteristic => lightManager.characteristic;
   States get ledState => state;
   BluetoothDevice get ledBluetoothDevice => lightManager.bluetoothDevice;
   int get ledDegree => degree;
