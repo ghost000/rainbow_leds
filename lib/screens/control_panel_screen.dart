@@ -22,7 +22,7 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
   void setTitleNameAfterBuildIndependent() {
     setState(() {
       _testIndependentFlag = true;
-      _titleName = "Control Panel. \n Selescted led: ${_ledState.getName}";
+      _titleName = "Control Panel. \n Selescted led: ${_ledState.ledName}";
     });
   }
 
@@ -199,7 +199,7 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
       if (ledStateEnum == LedStateEnum.independent) {
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
             BlDevicesBlocEventUpdateIndependent(LedState(
-                name: _ledState.getName,
+                name: _ledState.ledName,
                 state: _stateForWhite,
                 degree: _value)));
       } else if (ledStateEnum == LedStateEnum.group) {
@@ -386,7 +386,7 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
         if (ledStateEnum == LedStateEnum.independent) {
           BlocProvider.of<BlDevicesBlocBloc>(context).add(
               BlDevicesBlocEventUpdateIndependent(LedState(
-                  name: _ledState.getName, state: state, degree: degree)));
+                  name: _ledState.ledName, state: state, degree: degree)));
         } else if (ledStateEnum == LedStateEnum.group) {
           BlocProvider.of<BlDevicesBlocBloc>(context).add(
               BlDevicesBlocEventUpdateGroup(
@@ -438,7 +438,7 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
                   itemCount: ledStates.length,
                   itemBuilder: (BuildContext context, int index) {
                     return ListTile(
-                      title: Text(ledStates.elementAt(index).getName),
+                      title: Text(ledStates.elementAt(index).ledName),
                       onTap: () {
                         setState(() {
                           _ledState.setDeactivateInIndependent();
@@ -453,7 +453,7 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
                                   name: _ledState.name,
                                   active: _ledState.activeInIndependent)));
                           _titleName =
-                              "Control Panel. \n Selescted led: ${_ledState.getName}";
+                              "Control Panel. \n Selescted led: ${_ledState.ledName}";
                         });
                         Navigator.of(context).pop();
                       },

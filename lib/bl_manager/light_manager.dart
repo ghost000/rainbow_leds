@@ -7,8 +7,8 @@ import 'package:rainbow_leds/bloc/led_state.dart';
 import 'package:flutter/material.dart';
 
 class LightManager {
-  BluetoothCharacteristic characteristic;
-  BluetoothDevice bluetoothDevice;
+  BluetoothCharacteristic blCharacteristic;
+  BluetoothDevice blDevice;
   List<List<int>> sectionList;
   Map statesToFonctionMap;
   ReceivePort receivePort;
@@ -19,7 +19,7 @@ class LightManager {
   bool running;
   int colorRGBFlafe;
 
-  LightManager(this.characteristic, this.bluetoothDevice) {
+  LightManager(this.blCharacteristic, this.blDevice) {
     statesToFonctionMap = {
       //States.scan              : (  ){ light.scan();                                                      },
       States.rgb: ({Color color}) {
@@ -87,25 +87,23 @@ class LightManager {
 
   @override
   String toString() {
-    return 'LightManager BluetoothCharacteristic: $characteristic, BluetoothDevice: $bluetoothDevice.';
+    return 'LightManager BluetoothCharacteristic: $blCharacteristic, BluetoothDevice: $blDevice.';
   }
 
-  BluetoothCharacteristic get getCharacteristic => characteristic;
+  BluetoothCharacteristic get characteristic => blCharacteristic;
 
-  set setCharacteristic(BluetoothCharacteristic characteristic) {
+  set characteristic(BluetoothCharacteristic characteristic) {
     if (characteristic != null) {
       this.characteristic = characteristic;
     }
-    print("characteristic == null"); //debug print
   }
 
-  BluetoothDevice get getBluetoothDevice => bluetoothDevice;
+  BluetoothDevice get bluetoothDevice => blDevice;
 
-  set setBluetoothDevice(BluetoothDevice bluetoothDevice) {
+  set bluetoothDevice(BluetoothDevice bluetoothDevice) {
     if (bluetoothDevice != null) {
-      this.bluetoothDevice = bluetoothDevice;
+      blDevice = bluetoothDevice;
     }
-    print("bluetoothDevice == null"); //debug print
   }
 
   Future<void> sendPacket(int cmd, Color color) async {
@@ -118,9 +116,7 @@ class LightManager {
     bdata.setUint8(4, color.blue);
     bdata.setUint8(5, 0x56);
 
-    print(bdata.buffer.asUint8List()); //debug print
-
-    characteristic.write(bdata.buffer.asUint8List(), withoutResponse: true);
+    blCharacteristic.write(bdata.buffer.asUint8List(), withoutResponse: true);
   }
 
   Future<void> sendPacketWhite(int coolWhite, int warmWhite) async {
@@ -133,9 +129,7 @@ class LightManager {
     bdata.setUint8(4, warmWhite);
     bdata.setUint8(5, 0x56);
 
-    print(bdata.buffer.asUint8List()); //debug print
-
-    characteristic.write(bdata.buffer.asUint8List(), withoutResponse: true);
+    blCharacteristic.write(bdata.buffer.asUint8List(), withoutResponse: true);
   }
 
   void updateRGBRainbow() {
@@ -205,11 +199,11 @@ class LightManager {
   }
 
   Future<void> disconnect() async {
-    bluetoothDevice.disconnect();
+    blDevice.disconnect();
   }
 
   Future<void> connect() async {
-    bluetoothDevice.connect();
+    blDevice.connect();
   }
 
   Future<void> changeStateAndUpdate(

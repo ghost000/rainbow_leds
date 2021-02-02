@@ -104,15 +104,15 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
   @override
   Future<void> close() {
     for (final element in groupLedsStates) {
-      element.setState = States.disconnect;
+      element.ledState = States.disconnect;
       element.updateLightManager();
     }
     for (final element in independentLedsStates) {
-      element.setState = States.disconnect;
+      element.ledState = States.disconnect;
       element.updateLightManager();
     }
     for (final element in notAssignedLedsStates) {
-      element.setState = States.disconnect;
+      element.ledState = States.disconnect;
       element.updateLightManager();
     }
 
@@ -270,8 +270,8 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       BlDevicesBlocEventConnect event) async* {
     try {
       BluetoothCharacteristic characteristic;
-      await event.ledState.getBluetoothDevice.connect();
-      await event.ledState.getBluetoothDevice.discoverServices().then((value) {
+      await event.ledState.ledBluetoothDevice.connect();
+      await event.ledState.ledBluetoothDevice.discoverServices().then((value) {
         for (final element in value) {
           for (final characteristicElement in element.characteristics) {
             if (characteristicElement.uuid.toString() == transmitUuid) {
@@ -281,14 +281,14 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
                     .where((characteristicElement) =>
                         characteristicElement.name == event.ledState.name)
                     .first
-                    .setCharacteristic = characteristic;
+                    .ledCharacteristic = characteristic;
               } else if (event.groupOrIndependent ==
                   GroupOrIndependent.independent) {
                 independentLedsStates
                     .where((characteristicElement) =>
                         characteristicElement.name == event.ledState.name)
                     .first
-                    .setCharacteristic = characteristic;
+                    .ledCharacteristic = characteristic;
               }
             }
           }
@@ -308,7 +308,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       BlDevicesBlocEventDisconnect event) async* {
     try {
       //TODO implement removing ledState afetr disconnect
-      await event.ledState.getBluetoothDevice.disconnect();
+      await event.ledState.ledBluetoothDevice.disconnect();
       if (event.groupOrIndependent == GroupOrIndependent.group) {
         // groupLedsStates.remove(event.ledState);
         // _groupLedsStates.add(groupLedsStates);
@@ -335,9 +335,9 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       ledState.activeInIndependent = eventLedState.activeInIndependent;
       update = false;
     }
-    if (eventLedState.getCharacteristic != null &&
-        eventLedState.getCharacteristic != ledState.getCharacteristic) {
-      ledState.setCharacteristic = eventLedState.getCharacteristic;
+    if (eventLedState.ledCharacteristic != null &&
+        eventLedState.ledCharacteristic != ledState.ledCharacteristic) {
+      ledState.ledCharacteristic = eventLedState.ledCharacteristic;
     }
     if (eventLedState.color != null &&
         eventLedState.color != const Color(0xFFFFFFFF) &&
@@ -349,7 +349,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
         eventLedState.state != States.empty &&
         eventLedState.state != ledState.state &&
         eventLedState.state != States.active) {
-      ledState.setState = eventLedState.state;
+      ledState.ledState = eventLedState.state;
       update = true;
     }
     if (eventLedState.degree != null &&

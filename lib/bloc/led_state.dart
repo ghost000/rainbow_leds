@@ -46,8 +46,8 @@ class LedState {
         state = state ?? States.empty,
         activeInIndependent = active ?? false {
     lightManager = LightManager(characteristic, bluetoothDevice);
-    lightManager.setCharacteristic = characteristic;
-    lightManager.setBluetoothDevice = bluetoothDevice;
+    lightManager.characteristic = characteristic;
+    lightManager.bluetoothDevice = bluetoothDevice;
   }
 
   @override
@@ -56,32 +56,30 @@ class LedState {
   @override
   int get hashCode => name.hashCode + color.hashCode;
 
-  Color get getColor => color;
-  String get getName => name;
-  BluetoothCharacteristic get getCharacteristic =>
-      lightManager.getCharacteristic;
-  States get getState => state;
-  BluetoothDevice get getBluetoothDevice => lightManager.getBluetoothDevice;
-  int get getDegree => degree;
+  Color get ledColor => color;
+  String get ledName => name;
+  BluetoothCharacteristic get ledCharacteristic =>
+      lightManager.characteristic;
+  States get ledState => state;
+  BluetoothDevice get ledBluetoothDevice => lightManager.bluetoothDevice;
+  int get ledDegree => degree;
 
-  set setColor(Color newColor) => color = newColor ?? const Color(0xFFFFFFFF);
+  set ledColor(Color newColor) => color = newColor ?? const Color(0xFFFFFFFF);
 
-  set setName(String newName) => name = newName ?? '';
+  set ledName(String newName) => name = newName ?? '';
 
-  set setState(States newState) => state = newState ?? States.empty;
+  set ledState(States newState) => state = newState ?? States.empty;
 
-  set setCharacteristic(BluetoothCharacteristic characteristic) {
+  set ledCharacteristic(BluetoothCharacteristic characteristic) {
     if (characteristic != null) {
-      lightManager.setCharacteristic = characteristic;
+      lightManager.characteristic = characteristic;
     }
-    print("characteristic == null"); //debug print
   }
 
-  set setBluetoothDevice(BluetoothDevice bluetoothDevice) {
+  set ledBluetoothDevice(BluetoothDevice bluetoothDevice) {
     if (bluetoothDevice != null) {
-      lightManager.setBluetoothDevice = bluetoothDevice;
+      lightManager.bluetoothDevice = bluetoothDevice;
     }
-    print("bluetoothDevice == null"); //debug print
   }
 
   void updateLightManager() {

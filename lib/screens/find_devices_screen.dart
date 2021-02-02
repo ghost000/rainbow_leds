@@ -36,7 +36,7 @@ class FindDevicesScreen extends StatelessWidget {
                     ),
                   ),
                   floatingActionButton: buildfloatingActionButton(
-                      context), //buildStreamBuilder(context),
+                      context),
 
                   floatingActionButtonLocation:
                       FloatingActionButtonLocation.centerDocked,
@@ -99,7 +99,6 @@ Widget buildScanResultsColumn(Set<LedState> scanResults,
   return Column(children: <Widget>[
     const Divider(color: Colors.black),
     ...scanResults.map((scanResult) {
-      print(scanResult.toString()); //debug print
       return buildTextAndButtons(scanResult, ledStateEnum, context);
     }).toList(),
   ]);
@@ -163,8 +162,8 @@ Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
             BlDevicesBlocEventAddToIndependent(LedState(
                 name: scanResult.name,
-                characteristic: scanResult.getCharacteristic,
-                bluetoothDevice: scanResult.getBluetoothDevice,
+                characteristic: scanResult.ledCharacteristic,
+                bluetoothDevice: scanResult.ledBluetoothDevice,
                 active: scanResult.activeInIndependent)));
       },
       child: const Text("ADD independent"),
@@ -185,8 +184,8 @@ Widget buildGroupFlatButton(LedState scanResult, BuildContext context) {
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
             BlDevicesBlocEventAddToGroup(LedState(
                 name: scanResult.name,
-                characteristic: scanResult.getCharacteristic,
-                bluetoothDevice: scanResult.getBluetoothDevice,
+                characteristic: scanResult.ledCharacteristic,
+                bluetoothDevice: scanResult.ledBluetoothDevice,
                 active: scanResult.activeInIndependent)));
       },
       child: const Text("ADD Group"),
@@ -207,8 +206,8 @@ Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
             BlDevicesBlocEventAddToNotAssigned(LedState(
                 name: scanResult.name,
-                characteristic: scanResult.getCharacteristic,
-                bluetoothDevice: scanResult.getBluetoothDevice,
+                characteristic: scanResult.ledCharacteristic,
+                bluetoothDevice: scanResult.ledBluetoothDevice,
                 active: scanResult.activeInIndependent)));
       },
       child: const Text("ADD NotAssigned"),
@@ -218,9 +217,9 @@ Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
 
 Widget buildConnectDisconnectFlatButton(LedState scanResult,
     BuildContext context, GroupOrIndependent groupOrIndependent) {
-  if (scanResult.getBluetoothDevice != null) {
+  if (scanResult.ledBluetoothDevice != null) {
     return StreamBuilder<BluetoothDeviceState>(
-        stream: scanResult.getBluetoothDevice.state,
+        stream: scanResult.ledBluetoothDevice.state,
         initialData: BluetoothDeviceState.disconnected,
         builder: (context, snapshot) {
           if (snapshot.data == BluetoothDeviceState.disconnected) {
