@@ -1,5 +1,5 @@
 import 'dart:async';
-import "dart:isolate";
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:flutter_blue/flutter_blue.dart';
@@ -116,7 +116,8 @@ class LightManager {
     bdata.setUint8(4, color.blue);
     bdata.setUint8(5, 0x56);
 
-    blCharacteristic.write(bdata.buffer.asUint8List(), withoutResponse: true);
+    await blCharacteristic.write(bdata.buffer.asUint8List(),
+        withoutResponse: true);
   }
 
   Future<void> sendPacketWhite(int coolWhite, int warmWhite) async {
@@ -129,7 +130,8 @@ class LightManager {
     bdata.setUint8(4, warmWhite);
     bdata.setUint8(5, 0x56);
 
-    blCharacteristic.write(bdata.buffer.asUint8List(), withoutResponse: true);
+    await blCharacteristic.write(bdata.buffer.asUint8List(),
+        withoutResponse: true);
   }
 
   void updateRGBRainbow() {
@@ -138,9 +140,9 @@ class LightManager {
         (color / 255).floor() + 1 < sectionList.length
             ? (color / 255).floor() + 1
             : 0];
-    final List<int> rgb = [0, 0, 0];
+    final rgb = <int>[0, 0, 0];
 
-    for (int j = 0; j < 3; j++) {
+    for (var j = 0; j < 3; j++) {
       if (section[j] == nextSection[j]) {
         rgb[j] = section[j] * 255;
       } else if (section[j] > nextSection[j]) {
@@ -199,11 +201,11 @@ class LightManager {
   }
 
   Future<void> disconnect() async {
-    blDevice.disconnect();
+    await blDevice.disconnect();
   }
 
   Future<void> connect() async {
-    blDevice.connect();
+    await blDevice.connect();
   }
 
   Future<void> changeStateAndUpdate(
@@ -231,7 +233,7 @@ class LightManager {
 
   static Future<void> flareFakeUpdate(SendPort sendPort) async {
     Timer.periodic(const Duration(milliseconds: 30), (Timer t) {
-      sendPort.send("0");
+      sendPort.send('0');
     });
   }
 

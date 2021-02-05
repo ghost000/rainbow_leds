@@ -14,7 +14,7 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double statusBarHeight = MediaQuery.of(context).padding.top;
+    final statusBarHeight = MediaQuery.of(context).padding.top;
 
     return Scaffold(
       body: Padding(

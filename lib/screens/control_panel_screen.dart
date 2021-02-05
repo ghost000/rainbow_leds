@@ -14,7 +14,7 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
   Color _groupInitialColor = Colors.amber;
   LedState _ledState;
   int _value;
-  String _titleName = "Control Panel.";
+  String _titleName = 'Control Panel.';
   bool _testIndependentFlag = false;
   bool _testGroupFlag = false;
   States _stateForWhite;
@@ -22,14 +22,14 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
   void setTitleNameAfterBuildIndependent() {
     setState(() {
       _testIndependentFlag = true;
-      _titleName = "Control Panel. \n Selescted led: ${_ledState.ledName}";
+      _titleName = 'Control Panel. \n Selescted led: ${_ledState.ledName}';
     });
   }
 
   void setTitleNameAfterBuildGroup() {
     setState(() {
       _testGroupFlag = true;
-      _titleName = "Control Panel. Group leds";
+      _titleName = 'Control Panel. Group leds';
     });
   }
 
@@ -263,7 +263,7 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
                   countButtonInRow: 3,
                   leftGradienColor: Colors.white,
                   rightGradienColor: Colors.white,
-                  buttonName: "white rgb",
+                  buttonName: 'white rgb',
                   buttonTextColor: Colors.black),
               buildButton(
                   context: context,
@@ -273,7 +273,7 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
                   countButtonInRow: 3,
                   leftGradienColor: Colors.white,
                   rightGradienColor: Colors.white,
-                  buttonName: "white cool",
+                  buttonName: 'white cool',
                   buttonTextColor: Colors.black),
               buildButton(
                   context: context,
@@ -283,7 +283,7 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
                   countButtonInRow: 3,
                   leftGradienColor: Colors.white,
                   rightGradienColor: Colors.white,
-                  buttonName: "white rgb+cool",
+                  buttonName: 'white rgb+cool',
                   buttonTextColor: Colors.black),
             ],
           ),
@@ -301,7 +301,7 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
                   countButtonInRow: 3,
                   leftGradienColor: Colors.white,
                   rightGradienColor: Colors.black,
-                  buttonName: "strobo rgb",
+                  buttonName: 'strobo rgb',
                   buttonTextColor: Colors.white),
               buildButton(
                   context: context,
@@ -311,7 +311,7 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
                   countButtonInRow: 3,
                   leftGradienColor: Colors.white,
                   rightGradienColor: Colors.black,
-                  buttonName: "strobo cool",
+                  buttonName: 'strobo cool',
                   buttonTextColor: Colors.white),
             ],
           ),
@@ -340,7 +340,7 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
           countButtonInRow: 3,
           leftGradienColor: Colors.deepPurpleAccent,
           rightGradienColor: Colors.tealAccent,
-          buttonName: "rgb flare",
+          buttonName: 'rgb flare',
           buttonTextColor: Colors.amber),
       buildButton(
           context: context,
@@ -350,11 +350,11 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
           countButtonInRow: 3,
           leftGradienColor: Colors.red,
           rightGradienColor: Colors.blue,
-          buttonName: "police",
+          buttonName: 'police',
           buttonTextColor: Colors.white),
       if (ledStateEnum == LedStateEnum.independent)
         buildButtonChangeLed(ledStates, context, 3, Colors.black, Colors.black,
-            "change led", Colors.white)
+            'change led', Colors.white)
     ];
   }
 
@@ -428,7 +428,7 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
         showDialog(
           context: context,
           child: SimpleDialog(
-            title: const Text("Select Led"),
+            title: const Text('Select Led'),
             children: [
               SizedBox(
                 height: MediaQuery.of(context).size.width / 1.5,
@@ -453,7 +453,7 @@ class _ControlPanelScreenState extends State<ControlPanelScreen> {
                                   name: _ledState.name,
                                   active: _ledState.activeInIndependent)));
                           _titleName =
-                              "Control Panel. \n Selescted led: ${_ledState.ledName}";
+                              'Control Panel. \n Selescted led: ${_ledState.ledName}';
                         });
                         Navigator.of(context).pop();
                       },

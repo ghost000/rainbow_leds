@@ -9,7 +9,7 @@ part 'bl_devices_bloc_event.dart';
 part 'bl_devices_bloc_state.dart';
 
 class Light {
-  String transmitUuid = "f000aa61-0451-4000-b000-000000000000";
+  String transmitUuid = 'f000aa61-0451-4000-b000-000000000000';
 
   Map<String, int> packetTypes = {
     'set_color': 0xa1,
@@ -23,7 +23,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
     listenFlutterBlueDebug();
   }
 
-  String transmitUuid = "f000aa61-0451-4000-b000-000000000000";
+  String transmitUuid = 'f000aa61-0451-4000-b000-000000000000';
   Set<LedState> groupLedsStates = {};
   Set<LedState> independentLedsStates = {};
   Set<LedState> notAssignedLedsStates = {};
@@ -328,7 +328,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
   }
 
   void updateLeStateParam(LedState eventLedState, LedState ledState) {
-    bool update = false;
+    var update = false;
     if (eventLedState.activeInIndependent != null &&
         eventLedState.activeInIndependent != ledState.activeInIndependent &&
         eventLedState.state == States.active) {

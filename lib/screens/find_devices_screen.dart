@@ -26,7 +26,7 @@ class FindDevicesScreen extends StatelessWidget {
                     EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                 child: Scaffold(
                   appBar: AppBar(
-                    title: const Text("Find devices"),
+                    title: const Text('Find devices'),
                   ),
                   body: buildRefreshIndicator(context),
                   bottomNavigationBar: BottomAppBar(
@@ -53,7 +53,7 @@ Widget buildRefreshIndicator(BuildContext context) {
             parent: AlwaysScrollableScrollPhysics()),
         children: <Widget>[
           const Text(
-            "notAssignedLedsStates",
+            'notAssignedLedsStates',
             textAlign: TextAlign.left,
           ),
           StreamBuilder(
@@ -65,7 +65,7 @@ Widget buildRefreshIndicator(BuildContext context) {
                   buildScanResultsColumn(
                       snapshot.data, LedStateEnum.notAssigned, context)),
           const Text(
-            "groupLedsStatesStream",
+            'groupLedsStatesStream',
             textAlign: TextAlign.left,
           ),
           StreamBuilder(
@@ -77,7 +77,7 @@ Widget buildRefreshIndicator(BuildContext context) {
                   buildScanResultsColumn(
                       snapshot.data, LedStateEnum.group, context)),
           const Text(
-            "independentLedsStatesStream",
+            'independentLedsStatesStream',
             textAlign: TextAlign.left,
           ),
           StreamBuilder(
@@ -104,7 +104,7 @@ Widget buildScanResultsColumn(Set<LedState> scanResults,
 
 Widget buildTextAndButtons(
     LedState scanResult, LedStateEnum ledStateEnum, BuildContext context) {
-  final String name = scanResult.name.toString();
+  final name = scanResult.name.toString();
   return Column(children: <Widget>[
     Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -164,7 +164,7 @@ Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
                 bluetoothDevice: scanResult.ledBluetoothDevice,
                 active: scanResult.activeInIndependent)));
       },
-      child: const Text("ADD independent"),
+      child: const Text('ADD independent'),
     ),
   );
 }
@@ -186,7 +186,7 @@ Widget buildGroupFlatButton(LedState scanResult, BuildContext context) {
                 bluetoothDevice: scanResult.ledBluetoothDevice,
                 active: scanResult.activeInIndependent)));
       },
-      child: const Text("ADD Group"),
+      child: const Text('ADD Group'),
     ),
   );
 }
@@ -208,7 +208,7 @@ Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
                 bluetoothDevice: scanResult.ledBluetoothDevice,
                 active: scanResult.activeInIndependent)));
       },
-      child: const Text("ADD NotAssigned"),
+      child: const Text('ADD NotAssigned'),
     ),
   );
 }
@@ -233,7 +233,7 @@ Widget buildConnectDisconnectFlatButton(LedState scanResult,
                       BlDevicesBlocEventConnect(
                           scanResult, groupOrIndependent));
                 },
-                child: const Text("Connect"),
+                child: const Text('Connect'),
               ),
             );
           } else {
@@ -249,7 +249,7 @@ Widget buildConnectDisconnectFlatButton(LedState scanResult,
                       BlDevicesBlocEventDisconnect(
                           scanResult, groupOrIndependent));
                 },
-                child: const Text("Disconnect"),
+                child: const Text('Disconnect'),
               ),
             );
           }
