@@ -180,30 +180,34 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
   Widget buildColorPanel(BuildContext context) {
     return Center(
         child: Align(
-      alignment: Alignment.topCenter,
-      child: CircleColorPicker(
-        initialColor: ledStateEnum == LedStateEnum.independent
-            ? ledState.color
-            : groupInitialColor,
-        size: Size(MediaQuery.of(context).size.height / 2.25,
-            MediaQuery.of(context).size.height / 2.25),
-        strokeWidth: 5,
-        thumbSize: 36,
-        colorCodeBuilder: (context, color) {
-          return Text(
-            'rgb(${color.red}, ${color.green}, ${color.blue})',
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white70,
-            ),
-          );
-        },
-        onChanged: ledStateEnum == LedStateEnum.independent
-            ? _onIndependentColorChanged
-            : _onGroupColorChanged,
-      ),
-    ));
+            alignment: Alignment.center,
+            child: Column(children: [
+              Divider(
+                  color: Colors.transparent,
+                  height: MediaQuery.of(context).size.height / 20),
+              CircleColorPicker(
+                initialColor: ledStateEnum == LedStateEnum.independent
+                    ? ledState.color
+                    : groupInitialColor,
+                size: Size(MediaQuery.of(context).size.height / 2,
+                    MediaQuery.of(context).size.height / 2),
+                strokeWidth: 5,
+                thumbSize: 36,
+                colorCodeBuilder: (context, color) {
+                  return Text(
+                    'rgb(${color.red}, ${color.green}, ${color.blue})',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white70,
+                    ),
+                  );
+                },
+                onChanged: ledStateEnum == LedStateEnum.independent
+                    ? _onIndependentColorChanged
+                    : _onGroupColorChanged,
+              ),
+            ])));
   }
 
   void _onGroupColorChanged(Color color) {
@@ -233,12 +237,15 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
     return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(children: [
+          Divider(
+              color: Colors.transparent,
+              height: MediaQuery.of(context).size.height / 10),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: Colors.white,
               inactiveTrackColor: Colors.white70,
               trackShape: const RoundedRectSliderTrackShape(),
-              trackHeight: 4.0,
+              trackHeight: 10.0,
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12.0),
               thumbColor: Colors.yellowAccent,
               overlayColor: Colors.yellow.withAlpha(32),
@@ -269,9 +276,9 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
           ),
           Divider(
               color: Colors.transparent,
-              height: MediaQuery.of(context).size.height / 50),
+              height: MediaQuery.of(context).size.height / 30),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               buildButton(
                   context: context,
@@ -312,6 +319,9 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
     return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(children: [
+          Divider(
+              color: Colors.transparent,
+              height: MediaQuery.of(context).size.height / 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -339,9 +349,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
               color: Colors.transparent,
               height: MediaQuery.of(context).size.height / 30),
           Row(
-            mainAxisAlignment: ledStateEnum == LedStateEnum.independent
-                ? MainAxisAlignment.spaceBetween
-                : MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: buildButtonRowDependentOnLedState(ledStates).toList(),
           ),
           const Divider(color: Colors.transparent),
@@ -367,10 +375,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
           leftGradienColor: Colors.red,
           rightGradienColor: Colors.blue,
           buttonName: 'police',
-          buttonTextColor: Colors.white),
-      if (ledStateEnum == LedStateEnum.independent)
-        buildButtonChangeLed(ledStates, context, 3, Colors.black, Colors.black,
-            'change led', Colors.white)
+          buttonTextColor: Colors.white)
     ];
   }
 
@@ -501,4 +506,78 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
       ),
     );
   }
+
+  Widget buildFloatingActionButtons(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        FloatingActionButton.extended(
+          backgroundColor: Colors.red,
+            onPressed: () {
+              if (ledStateEnum == LedStateEnum.independent) {
+                BlocProvider.of<BlDevicesBlocBloc>(context).add(
+                    BlDevicesBlocEventUpdateIndependent(LedState(
+                        name: ledState.ledName, state: States.disable)));
+              } else if (ledStateEnum == LedStateEnum.group) {
+                BlocProvider.of<BlDevicesBlocBloc>(context).add(
+                    BlDevicesBlocEventUpdateGroup(
+                        LedState(state: States.disable)));
+              }
+            },
+            label: Text('Disable')),
+        if (ledStateEnum == LedStateEnum.independent)
+          SizedBox(
+            width: 20,
+          ),
+        if (ledStateEnum == LedStateEnum.independent)
+          buildButtonChangeLed(
+              BlocProvider.of<BlDevicesBlocBloc>(context).independentLedsStates,
+              context,
+              3,
+              Colors.black,
+              Colors.black,
+              'change led',
+              Colors.white),
+      ],
+    );
+  }
 }
+// Widget
+
+// }
+// Padding(
+//         padding: const EdgeInsets.all(10.0),
+//         child: Column(children: [
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceAround,
+//             children: [
+//               buildButton(
+//                   context: context,
+//                   state: States.strobo,
+//                   degree: 0,
+//                   countButtonInRow: 3,
+//                   leftGradienColor: Colors.white,
+//                   rightGradienColor: Colors.black,
+//                   buttonName: 'strobo rgb',
+//                   buttonTextColor: Colors.white),
+//               buildButton(
+//                   context: context,
+//                   state: States.stroboStrongWhite,
+//                   degree: 0,
+//                   countButtonInRow: 3,
+//                   leftGradienColor: Colors.white,
+//                   rightGradienColor: Colors.black,
+//                   buttonName: 'strobo cool',
+//                   buttonTextColor: Colors.white),
+//             ],
+//           ),
+//           Divider(
+//               color: Colors.transparent, height: MediaQuery.of(context).size.height / 30),
+//           Row(
+//             mainAxisAlignment: ledStateEnum == LedStateEnum.independent
+//                 ? MainAxisAlignment.spaceBetween
+//                 : MainAxisAlignment.spaceAround,
+//             children: buildButtonRowDependentOnLedState(ledStates).toList(),
+//           ),
+//           const Divider(color: Colors.transparent),
+//         ]));

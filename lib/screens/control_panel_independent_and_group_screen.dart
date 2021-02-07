@@ -59,6 +59,9 @@ class _ControlPanelIndependentAndGroupScreenState
                 buildGroupControler(context),
               ]),
           bottomNavigationBar: buildBottomNavigationBar(),
+          floatingActionButton: buildFloatingActionButtons(context),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
         ));
   }
 }

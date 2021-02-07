@@ -25,6 +25,8 @@ class _ControlPanelGroupScreenState
       ),
       body: buildGroupControler(context),
       bottomNavigationBar: buildBottomNavigationBar(),
+      floatingActionButton: buildFloatingActionButtons(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
