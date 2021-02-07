@@ -9,7 +9,7 @@ packages:
     source: hosted
     version: "14.0.0"
   analyzer:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: analyzer
       url: "https://pub.dartlang.org"
@@ -187,7 +187,7 @@ packages:
     source: hosted
     version: "0.6.2"
   lint:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: lint
       url: "https://pub.dartlang.org"
@@ -243,7 +243,7 @@ packages:
     source: hosted
     version: "1.8.0-nullsafety.1"
   pedantic:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: pedantic
       url: "https://pub.dartlang.org"
@@ -353,5 +353,5 @@ packages:
     source: hosted
     version: "2.2.1"
 sdks:
-  dart: ">=2.10.0-110 <2.11.0"
-  flutter: ">=1.16.0 <2.0.0"
+  dart: ">=2.10.0 <2.11.0"
+  flutter: ">=1.22.6 <2.0.0"

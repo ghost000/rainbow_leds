@@ -35,9 +35,23 @@ class AppStateBlocEventGroup extends AppStateBlocEvent {
   }
 }
 
-class AppStateBlocEventControl extends AppStateBlocEvent {
+class AppStateBlocEventControlIndependentAndGroup extends AppStateBlocEvent {
   @override
   String toString() {
-    return 'AppStateBlocEventControl';
+    return 'AppStateBlocEventControlIndependentAndGroup';
+  }
+}
+
+class AppStateBlocEventControlIndependent extends AppStateBlocEvent {
+  @override
+  String toString() {
+    return 'AppStateBlocEventControlIndependent';
+  }
+}
+
+class AppStateBlocEventControlGroup extends AppStateBlocEvent {
+  @override
+  String toString() {
+    return 'AppStateBlocEventControlGroup';
   }
 }

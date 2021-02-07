@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:rainbow_leds/bloc/blocs.dart';
-import 'package:rainbow_leds/screens/find_devices_screen.dart';
-import 'package:rainbow_leds/screens/bluetooth_off_screen.dart';
-import 'package:rainbow_leds/screens/control_panel_screen.dart';
+import 'bloc/blocs.dart';
+import 'screens/bluetooth_off_screen.dart';
+import 'screens/control_panel_independent_and_group_screen.dart';
+import 'screens/control_panel_independent_screen.dart';
+import 'screens/control_panel_group_screen.dart';
+import 'screens/find_devices_screen.dart';
 
 void main() {
   Bloc.observer = SimpleBlocObserver();
@@ -32,7 +34,7 @@ class _RainbowLedsApp extends State<RainbowLedsApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Rainbow leds app',
+      title: 'just light',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,
@@ -45,7 +47,12 @@ class _RainbowLedsApp extends State<RainbowLedsApp> {
       routes: {
         '/': (context) => FindDevicesScreen(),
         '/BluetoothOffScreen': (context) => const BluetoothOffScreen(),
-        '/ControlPanelScreen': (context) => ControlPanelScreen(),
+        '/ControlPanelIndependentAndGroupScreen': (context) =>
+            const ControlPanelIndependentAndGroupScreen(),
+        '/ControlPanelIndependentScreen': (context) =>
+            const ControlPanelIndependentScreen(),
+        '/ControlPanelGroupScreen': (context) =>
+            const ControlPanelGroupScreen(),
       },
       initialRoute: '/',
     );

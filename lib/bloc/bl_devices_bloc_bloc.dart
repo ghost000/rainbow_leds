@@ -1,9 +1,10 @@
 import 'package:bloc/bloc.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
-import 'package:rainbow_leds/bloc/led_state.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:rxdart/rxdart.dart';
+
+import 'led_state.dart';
 
 part 'bl_devices_bloc_event.dart';
 part 'bl_devices_bloc_state.dart';

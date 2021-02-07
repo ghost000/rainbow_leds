@@ -21,8 +21,12 @@ class AppStateBlocBloc extends Bloc<AppStateBlocEvent, AppStateBlocState> {
       yield AppStateBlocBluetoothOff();
     } else if (event is AppStateBlocEventGroup) {
       yield AppStateBlocGroup();
-    } else if (event is AppStateBlocEventControl) {
-      yield AppStateBlocControl();
+    } else if (event is AppStateBlocEventControlIndependentAndGroup) {
+      yield AppStateBlocControlIndependentAndGroup();
+    } else if (event is AppStateBlocEventControlIndependent) {
+      yield AppStateBlocControlIndependent();
+    } else if (event is AppStateBlocEventControlGroup) {
+      yield AppStateBlocControlGroup();
     }
   }
 }

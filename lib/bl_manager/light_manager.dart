@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:isolate';
 import 'dart:typed_data';
 
-import 'package:flutter_blue/flutter_blue.dart';
-import 'package:rainbow_leds/bloc/led_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
+
+import '../bloc/led_state.dart' show States;
 
 class LightManager {
   BluetoothCharacteristic blCharacteristic;
@@ -21,7 +22,7 @@ class LightManager {
 
   LightManager(this.blCharacteristic, this.blDevice) {
     statesToFonctionMap = {
-      //States.scan              : (  ){ light.scan();                                                      },
+      //States.scan              : (  ){ light.scan();  },
       States.rgb: ({Color color}) {
         sendPacket(0xa1, color);
       },
@@ -49,24 +50,12 @@ class LightManager {
       States.disable: () {
         sendPacket(0xa1, const Color.fromARGB(255, 0, 0, 0));
       },
-      States.rgbFlare: () {
-        updateRGBRainbow();
-      },
-      States.stroboStrongWhite: () {
-        stroboStrongWhite();
-      },
-      States.strobo: () {
-        strobo();
-      },
-      States.police: () {
-        police();
-      },
-      States.connect: () {
-        connect();
-      },
-      States.disconnect: () {
-        disconnect();
-      },
+      States.rgbFlare: updateRGBRainbow,
+      States.stroboStrongWhite: stroboStrongWhite,
+      States.strobo: strobo,
+      States.police: police,
+      States.connect: connect,
+      States.disconnect: disconnect,
     };
 
     sectionList = [

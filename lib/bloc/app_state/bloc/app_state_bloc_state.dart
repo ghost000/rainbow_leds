@@ -15,4 +15,8 @@ class AppStateBlocBluetoothOff extends AppStateBlocState {}
 
 class AppStateBlocGroup extends AppStateBlocState {}
 
-class AppStateBlocControl extends AppStateBlocState {}
+class AppStateBlocControlIndependentAndGroup extends AppStateBlocState {}
+
+class AppStateBlocControlIndependent extends AppStateBlocState {}
+
+class AppStateBlocControlGroup extends AppStateBlocState {}

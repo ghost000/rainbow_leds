@@ -7,7 +7,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="rainbow_leds"
+        android:label="just light"
         android:icon="@mipmap/download">
         <activity
             android:name=".MainActivity"

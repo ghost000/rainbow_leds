@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rainbow_leds/bloc/blocs.dart';
-import 'package:rainbow_leds/screens/bluetooth_off_screen.dart';
+import '../bloc/blocs.dart';
+import '../bloc/multiple_stream_builder.dart';
+import 'bluetooth_off_screen.dart';
 
 class FindDevicesScreen extends StatelessWidget {
   @override
@@ -10,8 +11,15 @@ class FindDevicesScreen extends StatelessWidget {
     return BlocListener<AppStateBlocBloc, AppStateBlocState>(
         cubit: BlocProvider.of<AppStateBlocBloc>(context),
         listener: (context, state) {
-          if (state is AppStateBlocControl) {
-            Navigator.of(context).pushNamed('/ControlPanelScreen');
+          if (state is AppStateBlocControlIndependentAndGroup) {
+            Navigator.of(context)
+                .pushNamed('/ControlPanelIndependentAndGroupScreen');
+          }
+          if (state is AppStateBlocControlIndependent) {
+            Navigator.of(context).pushNamed('/ControlPanelIndependentScreen');
+          }
+          if (state is AppStateBlocControlGroup) {
+            Navigator.of(context).pushNamed('/ControlPanelGroupScreen');
           }
         },
         child: StreamBuilder<BluetoothState>(
@@ -25,20 +33,21 @@ class FindDevicesScreen extends StatelessWidget {
                 padding:
                     EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                 child: Scaffold(
-                  appBar: AppBar(
-                    title: const Text('Find devices'),
-                  ),
-                  body: buildRefreshIndicator(context),
-                  bottomNavigationBar: BottomAppBar(
-                    shape: const CircularNotchedRectangle(),
-                    child: Container(
-                      height: 50.0,
+                    appBar: AppBar(
+                      title: const Text('Find devices'),
                     ),
-                  ),
-                  floatingActionButton: buildfloatingActionButton(context),
-                  floatingActionButtonLocation:
-                      FloatingActionButtonLocation.centerDocked,
-                ),
+                    body: buildRefreshIndicator(context),
+                    bottomNavigationBar: BottomAppBar(
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      shape: const CircularNotchedRectangle(),
+                      child: Container(
+                        height: 50.0,
+                      ),
+                    ),
+                    floatingActionButton:
+                        buildFloatingActionButtonFromDuobleStreams(context),
+                    floatingActionButtonLocation:
+                        FloatingActionButtonLocation.centerDocked),
               );
             }));
   }
@@ -259,36 +268,79 @@ Widget buildConnectDisconnectFlatButton(LedState scanResult,
   }
 }
 
-// StreamBuilder<bool> buildStreamBuilder(BuildContext context, Stream<bool> boolStream, Widget buildFlatButton(bool scanResult, BuildContext context)) {
-//   return StreamBuilder<bool>(
-//     stream: boolStream,
-//     initialData: false,
-//     builder: (context, snapshot) => buildFlatButton, context),
-//   );
-// }
+Widget buildFloatingActionButtonFromDuobleStreams(BuildContext context) {
+  return DoubleStreamBuilder(
+    streamIndependent:
+        BlocProvider.of<BlDevicesBlocBloc>(context).independentLedsStatesStream,
+    streamGroup:
+        BlocProvider.of<BlDevicesBlocBloc>(context).groupLedsStatesStream,
+    builder: buildFloatingButtonFromDoubleStreams,
+  );
+}
 
-// Widget buildfloatingActionButton(bool isScanning, BuildContext context) {
-//   if (isScanning) {
-//     return FloatingActionButton(
-//       child: Icon(Icons.stop),
-//       onPressed: () => FlutterBlue.instance.stopScan(),
-//       backgroundColor: Colors.red,
-//     );
-//   } else {
-//     return FloatingActionButton(
-//         child: Icon(Icons.search),
-//         onPressed: () => FlutterBlue.instance
-//             .startScan(scanMode: ScanMode.lowLatency, timeout: Duration(seconds: 20)));
-//   }
-// }
-
-Widget buildfloatingActionButton(BuildContext context) {
-  return FloatingActionButton(
-    onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
-        .add(AppStateBlocEventControl()),
+Widget buildFloatingButtonFromDoubleStreams(
+    BuildContext context, LedStateStream ledStateStream) {
+  if (ledStateStream == LedStateStream.both) {
+    return FloatingActionButton.extended(
+      onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
+          .add(AppStateBlocEventControlIndependentAndGroup()),
+      backgroundColor: Colors.black,
+      label:
+          Text('Independent and group', style: TextStyle(color: Colors.white)),
+      icon: const Icon(
+        Icons.design_services,
+        size: 35,
+        color: Colors.white,
+      ),
+    );
+  } else if (ledStateStream == LedStateStream.independent) {
+    return FloatingActionButton.extended(
+      onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
+          .add(AppStateBlocEventControlIndependent()),
+      backgroundColor: Colors.black,
+      label: Text('Independent', style: TextStyle(color: Colors.white)),
+      icon: const Icon(
+        Icons.design_services,
+        size: 35,
+        color: Colors.white,
+      ),
+    );
+  } else if (ledStateStream == LedStateStream.group) {
+    return FloatingActionButton.extended(
+      onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
+          .add(AppStateBlocEventControlGroup()),
+      backgroundColor: Colors.black,
+      label: Text('Group', style: TextStyle(color: Colors.white)),
+      icon: const Icon(
+        Icons.design_services,
+        size: 35,
+        color: Colors.white,
+      ),
+    );
+  } else if (ledStateStream == LedStateStream.empty) {
+    return FloatingActionButton.extended(
+      onPressed: () async {
+        await FlutterBlue.instance.startScan(
+            scanMode: ScanMode.lowPower, timeout: const Duration(seconds: 4));
+      },
+      backgroundColor: Colors.black,
+      label: Text('Search', style: TextStyle(color: Colors.white)),
+      icon: const Icon(
+        Icons.compare_arrows,
+        size: 35,
+        color: Colors.white,
+      ),
+    );
+  }
+  return FloatingActionButton.extended(
+    onPressed: () async {
+      await FlutterBlue.instance.startScan(
+          scanMode: ScanMode.lowPower, timeout: const Duration(seconds: 4));
+    },
     backgroundColor: Colors.black,
-    child: const Icon(
-      Icons.design_services,
+    label: Text('Search', style: TextStyle(color: Colors.white)),
+    icon: const Icon(
+      Icons.compare_arrows,
       size: 35,
       color: Colors.white,
     ),
