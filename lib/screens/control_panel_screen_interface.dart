@@ -35,25 +35,32 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
   }
 
   Widget buildWidget(BuildContext context) {
-    return StreamBuilder<BluetoothState>(
-        stream: FlutterBlue.instance.state,
-        initialData: BluetoothState.unknown,
-        builder: (context, snapshot) {
-          if (snapshot.data != BluetoothState.on) {
-            return BluetoothOffScreen(state: snapshot.data);
+    return BlocListener<AppStateBlocBloc, AppStateBlocState>(
+        cubit: BlocProvider.of<AppStateBlocBloc>(context),
+        listener: (context, state) {
+          if (state is AppStateBlocScenario) {
+            Navigator.of(context).pushNamed('/ScenarioSetterScreen');
           }
-          return WillPopScope(
-              onWillPop: () {
-                BlocProvider.of<AppStateBlocBloc>(context)
-                    .add(AppStateBlocEventGroup());
-                Navigator.of(context).pop();
-                return Future.value(true);
-              },
-              child: Padding(
-                  padding:
-                      EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                  child: buildClassWidget(context)));
-        });
+        },
+        child: StreamBuilder<BluetoothState>(
+            stream: FlutterBlue.instance.state,
+            initialData: BluetoothState.unknown,
+            builder: (context, snapshot) {
+              if (snapshot.data != BluetoothState.on) {
+                return BluetoothOffScreen(state: snapshot.data);
+              }
+              return WillPopScope(
+                  onWillPop: () {
+                    BlocProvider.of<AppStateBlocBloc>(context)
+                        .add(AppStateBlocEventGroup());
+                    Navigator.of(context).pop();
+                    return Future.value(true);
+                  },
+                  child: Padding(
+                      padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).padding.top),
+                      child: buildClassWidget(context)));
+            }));
   }
 
   void setTitleNameAfterBuildIndependent() {
@@ -375,7 +382,14 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
           leftGradienColor: Colors.red,
           rightGradienColor: Colors.blue,
           buttonName: 'police',
-          buttonTextColor: Colors.white)
+          buttonTextColor: Colors.white),
+      buildScenarioButton(
+          context: context,
+          countButtonInRow: 3,
+          leftGradienColor: Colors.yellow,
+          rightGradienColor: Colors.green,
+          buttonName: 'create scenario',
+          buttonTextColor: Colors.blue)
     ];
   }
 
@@ -413,6 +427,38 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
                   LedState(state: state, degree: degree)));
         }
       },
+      child: Container(
+        height: MediaQuery.of(context).size.height / 17,
+        width: MediaQuery.of(context).size.width / (countButtonInRow + 0.5),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [leftGradienColor, rightGradienColor],
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(100.0)),
+        ),
+        child: Center(
+          child: Text(
+            buttonName,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: buttonTextColor,
+                fontSize: 20.0),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildScenarioButton(
+      {BuildContext context,
+      int countButtonInRow,
+      Color leftGradienColor,
+      Color rightGradienColor,
+      String buttonName,
+      Color buttonTextColor}) {
+    return GestureDetector(
+      onTap: () => BlocProvider.of<AppStateBlocBloc>(context)
+          .add(AppStateBlocEventScenario()),
       child: Container(
         height: MediaQuery.of(context).size.height / 17,
         width: MediaQuery.of(context).size.width / (countButtonInRow + 0.5),
@@ -512,7 +558,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         FloatingActionButton.extended(
-          backgroundColor: Colors.red,
+            backgroundColor: Colors.red,
             onPressed: () {
               if (ledStateEnum == LedStateEnum.independent) {
                 BlocProvider.of<BlDevicesBlocBloc>(context).add(

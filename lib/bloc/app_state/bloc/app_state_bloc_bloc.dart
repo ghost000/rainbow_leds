@@ -27,6 +27,8 @@ class AppStateBlocBloc extends Bloc<AppStateBlocEvent, AppStateBlocState> {
       yield AppStateBlocControlIndependent();
     } else if (event is AppStateBlocEventControlGroup) {
       yield AppStateBlocControlGroup();
+    } else if (event is AppStateBlocEventScenario) {
+      yield AppStateBlocScenario();
     }
   }
 }

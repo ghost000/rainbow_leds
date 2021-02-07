@@ -55,3 +55,10 @@ class AppStateBlocEventControlGroup extends AppStateBlocEvent {
     return 'AppStateBlocEventControlGroup';
   }
 }
+
+class AppStateBlocEventScenario extends AppStateBlocEvent {
+  @override
+  String toString() {
+    return 'AppStateBlocEventScenario';
+  }
+}

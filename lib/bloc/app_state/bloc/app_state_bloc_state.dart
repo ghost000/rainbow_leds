@@ -20,3 +20,5 @@ class AppStateBlocControlIndependentAndGroup extends AppStateBlocState {}
 class AppStateBlocControlIndependent extends AppStateBlocState {}
 
 class AppStateBlocControlGroup extends AppStateBlocState {}
+
+class AppStateBlocScenario extends AppStateBlocState {}

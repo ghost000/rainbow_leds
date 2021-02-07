@@ -7,6 +7,7 @@ import 'screens/control_panel_independent_and_group_screen.dart';
 import 'screens/control_panel_independent_screen.dart';
 import 'screens/control_panel_group_screen.dart';
 import 'screens/find_devices_screen.dart';
+import 'screens/scenario_screen.dart';
 
 void main() {
   Bloc.observer = SimpleBlocObserver();
@@ -53,6 +54,7 @@ class _RainbowLedsApp extends State<RainbowLedsApp> {
             const ControlPanelIndependentScreen(),
         '/ControlPanelGroupScreen': (context) =>
             const ControlPanelGroupScreen(),
+        '/ScenarioSetterScreen': (context) => const ScenarioSetterScreen(),
       },
       initialRoute: '/',
     );
