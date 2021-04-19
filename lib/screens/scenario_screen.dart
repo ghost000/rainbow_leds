@@ -11,6 +11,8 @@ class ScenarioSetterScreen extends StatefulWidget {
 }
 
 class ScenarioSetterScreenState extends State<ScenarioSetterScreen> {
+  List<Step> stepContainer = <Step>[];
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<BluetoothState>(
@@ -32,7 +34,7 @@ class ScenarioSetterScreenState extends State<ScenarioSetterScreen> {
                       EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                   child: Scaffold(
                     appBar: AppBar(
-                      title: Text('Scenario Setter'),
+                      title: const Text('Scenario Setter'),
                     ),
                     body: SingleChildScrollView(
                       child: Column(
@@ -45,7 +47,7 @@ class ScenarioSetterScreenState extends State<ScenarioSetterScreen> {
 
   Widget buildStepper(BuildContext context) {
     return Stepper(
-      steps: [
+      steps: const [
         Step(
           title: Text('Start'),
           content: Text('Before starting, we should create a page.'),

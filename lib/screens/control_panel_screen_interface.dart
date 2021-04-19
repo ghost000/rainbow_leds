@@ -36,7 +36,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
 
   Widget buildWidget(BuildContext context) {
     return BlocListener<AppStateBlocBloc, AppStateBlocState>(
-        cubit: BlocProvider.of<AppStateBlocBloc>(context),
+        bloc: BlocProvider.of<AppStateBlocBloc>(context),
         listener: (context, state) {
           if (state is AppStateBlocScenario) {
             Navigator.of(context).pushNamed('/ScenarioSetterScreen');
@@ -187,34 +187,33 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
   Widget buildColorPanel(BuildContext context) {
     return Center(
         child: Align(
-            alignment: Alignment.center,
             child: Column(children: [
-              Divider(
-                  color: Colors.transparent,
-                  height: MediaQuery.of(context).size.height / 20),
-              CircleColorPicker(
-                initialColor: ledStateEnum == LedStateEnum.independent
-                    ? ledState.color
-                    : groupInitialColor,
-                size: Size(MediaQuery.of(context).size.height / 2,
-                    MediaQuery.of(context).size.height / 2),
-                strokeWidth: 5,
-                thumbSize: 36,
-                colorCodeBuilder: (context, color) {
-                  return Text(
-                    'rgb(${color.red}, ${color.green}, ${color.blue})',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white70,
-                    ),
-                  );
-                },
-                onChanged: ledStateEnum == LedStateEnum.independent
-                    ? _onIndependentColorChanged
-                    : _onGroupColorChanged,
-              ),
-            ])));
+      Divider(
+          color: Colors.transparent,
+          height: MediaQuery.of(context).size.height / 20),
+      CircleColorPicker(
+        initialColor: ledStateEnum == LedStateEnum.independent
+            ? ledState.color
+            : groupInitialColor,
+        size: Size(MediaQuery.of(context).size.height / 2.3,
+            MediaQuery.of(context).size.height / 2.3),
+        strokeWidth: 5,
+        thumbSize: 36,
+        colorCodeBuilder: (context, color) {
+          return Text(
+            'rgb(${color.red}, ${color.green}, ${color.blue})',
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white70,
+            ),
+          );
+        },
+        onChanged: ledStateEnum == LedStateEnum.independent
+            ? _onIndependentColorChanged
+            : _onGroupColorChanged,
+      ),
+    ])));
   }
 
   void _onGroupColorChanged(Color color) {
@@ -471,6 +470,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
         child: Center(
           child: Text(
             buttonName,
+            textAlign: TextAlign.center,
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: buttonTextColor,
@@ -493,42 +493,44 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
       onTap: () {
         showDialog(
           context: context,
-          child: SimpleDialog(
-            title: const Text('Select Led'),
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.width / 1.5,
-                width: MediaQuery.of(context).size.width / 1.5,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: ledStates.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(ledStates.elementAt(index).ledName),
-                      onTap: () {
-                        setState(() {
-                          ledState.setDeactivateInIndependent();
-                          BlocProvider.of<BlDevicesBlocBloc>(context).add(
-                              BlDevicesBlocEventUpdateIndependent(LedState(
-                                  name: ledState.name,
-                                  active: ledState.activeInIndependent)));
-                          ledState = ledStates.elementAt(index);
-                          ledState.setActiveInIndependent();
-                          BlocProvider.of<BlDevicesBlocBloc>(context).add(
-                              BlDevicesBlocEventUpdateIndependent(LedState(
-                                  name: ledState.name,
-                                  active: ledState.activeInIndependent)));
-                          titleName =
-                              'Control Panel. \n Selescted led: ${ledState.ledName}';
-                        });
-                        Navigator.of(context).pop();
-                      },
-                    );
-                  },
-                ),
-              )
-            ],
-          ),
+          builder: (BuildContext context) {
+            return SimpleDialog(
+              title: const Text('Select Led'),
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.width / 1.5,
+                  width: MediaQuery.of(context).size.width / 1.5,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: ledStates.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        title: Text(ledStates.elementAt(index).ledName),
+                        onTap: () {
+                          setState(() {
+                            ledState.setDeactivateInIndependent();
+                            BlocProvider.of<BlDevicesBlocBloc>(context).add(
+                                BlDevicesBlocEventUpdateIndependent(LedState(
+                                    name: ledState.name,
+                                    active: ledState.activeInIndependent)));
+                            ledState = ledStates.elementAt(index);
+                            ledState.setActiveInIndependent();
+                            BlocProvider.of<BlDevicesBlocBloc>(context).add(
+                                BlDevicesBlocEventUpdateIndependent(LedState(
+                                    name: ledState.name,
+                                    active: ledState.activeInIndependent)));
+                            titleName =
+                                'Control Panel. \n Selescted led: ${ledState.ledName}';
+                          });
+                          Navigator.of(context).pop();
+                        },
+                      );
+                    },
+                  ),
+                )
+              ],
+            );
+          },
         );
       },
       child: Container(
@@ -570,9 +572,9 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
                         LedState(state: States.disable)));
               }
             },
-            label: Text('Disable')),
+            label: const Text('Disable')),
         if (ledStateEnum == LedStateEnum.independent)
-          SizedBox(
+          const SizedBox(
             width: 20,
           ),
         if (ledStateEnum == LedStateEnum.independent)

@@ -9,7 +9,7 @@ class FindDevicesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AppStateBlocBloc, AppStateBlocState>(
-        cubit: BlocProvider.of<AppStateBlocBloc>(context),
+        bloc: BlocProvider.of<AppStateBlocBloc>(context),
         listener: (context, state) {
           if (state is AppStateBlocControlIndependentAndGroup) {
             Navigator.of(context)
@@ -156,14 +156,21 @@ List<Widget> buildButtons(
   return <Widget>[];
 }
 
+final ButtonStyle flatButtonStyle = TextButton.styleFrom(
+  backgroundColor: Colors.amber,
+  primary: Colors.green,
+  minimumSize: const Size(88, 36),
+  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+      side: BorderSide(color: Colors.blue)),
+);
+
 Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
   return Align(
     alignment: Alignment.centerRight,
-    child: FlatButton(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          side: const BorderSide(color: Colors.cyan)),
-      color: Colors.cyanAccent,
+    child: TextButton(
+      style: flatButtonStyle,
       onPressed: () {
         scanResult.setDeactivateInIndependent();
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
@@ -181,11 +188,7 @@ Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
 Widget buildGroupFlatButton(LedState scanResult, BuildContext context) {
   return Align(
     alignment: FractionalOffset.topRight,
-    child: FlatButton(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          side: const BorderSide(color: Colors.amber)),
-      color: Colors.amberAccent,
+    child: TextButton(
       onPressed: () {
         scanResult.setDeactivateInIndependent();
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
@@ -203,11 +206,7 @@ Widget buildGroupFlatButton(LedState scanResult, BuildContext context) {
 Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
   return Align(
     alignment: FractionalOffset.topRight,
-    child: FlatButton(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          side: const BorderSide(color: Colors.purple)),
-      color: Colors.purpleAccent,
+    child: TextButton(
       onPressed: () {
         scanResult.setDeactivateInIndependent();
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
@@ -232,11 +231,7 @@ Widget buildConnectDisconnectFlatButton(LedState scanResult,
           if (snapshot.data == BluetoothDeviceState.disconnected) {
             return Align(
               alignment: FractionalOffset.topRight,
-              child: FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    side: const BorderSide(color: Colors.green)),
-                color: Colors.greenAccent,
+              child: TextButton(
                 onPressed: () {
                   BlocProvider.of<BlDevicesBlocBloc>(context).add(
                       BlDevicesBlocEventConnect(
@@ -247,20 +242,15 @@ Widget buildConnectDisconnectFlatButton(LedState scanResult,
             );
           } else {
             return Align(
-              alignment: FractionalOffset.topRight,
-              child: FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    side: const BorderSide(color: Colors.red)),
-                color: Colors.redAccent,
-                onPressed: () {
-                  BlocProvider.of<BlDevicesBlocBloc>(context).add(
-                      BlDevicesBlocEventDisconnect(
-                          scanResult, groupOrIndependent));
-                },
-                child: const Text('Disconnect'),
-              ),
-            );
+                alignment: FractionalOffset.topRight,
+                child: ElevatedButton(
+                  onPressed: () {
+                    BlocProvider.of<BlDevicesBlocBloc>(context).add(
+                        BlDevicesBlocEventDisconnect(
+                            scanResult, groupOrIndependent));
+                  },
+                  child: const Text('Disconnect'),
+                ));
           }
         });
   } else {
@@ -285,8 +275,8 @@ Widget buildFloatingButtonFromDoubleStreams(
       onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
           .add(AppStateBlocEventControlIndependentAndGroup()),
       backgroundColor: Colors.black,
-      label:
-          Text('Independent and group', style: TextStyle(color: Colors.white)),
+      label: const Text('Independent and group',
+          style: TextStyle(color: Colors.white)),
       icon: const Icon(
         Icons.design_services,
         size: 35,
@@ -298,7 +288,7 @@ Widget buildFloatingButtonFromDoubleStreams(
       onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
           .add(AppStateBlocEventControlIndependent()),
       backgroundColor: Colors.black,
-      label: Text('Independent', style: TextStyle(color: Colors.white)),
+      label: const Text('Independent', style: TextStyle(color: Colors.white)),
       icon: const Icon(
         Icons.design_services,
         size: 35,
@@ -310,7 +300,7 @@ Widget buildFloatingButtonFromDoubleStreams(
       onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
           .add(AppStateBlocEventControlGroup()),
       backgroundColor: Colors.black,
-      label: Text('Group', style: TextStyle(color: Colors.white)),
+      label: const Text('Group', style: TextStyle(color: Colors.white)),
       icon: const Icon(
         Icons.design_services,
         size: 35,
@@ -324,7 +314,7 @@ Widget buildFloatingButtonFromDoubleStreams(
             scanMode: ScanMode.lowPower, timeout: const Duration(seconds: 4));
       },
       backgroundColor: Colors.black,
-      label: Text('Search', style: TextStyle(color: Colors.white)),
+      label: const Text('Search', style: TextStyle(color: Colors.white)),
       icon: const Icon(
         Icons.compare_arrows,
         size: 35,
@@ -338,7 +328,7 @@ Widget buildFloatingButtonFromDoubleStreams(
           scanMode: ScanMode.lowPower, timeout: const Duration(seconds: 4));
     },
     backgroundColor: Colors.black,
-    label: Text('Search', style: TextStyle(color: Colors.white)),
+    label: const Text('Search', style: TextStyle(color: Colors.white)),
     icon: const Icon(
       Icons.compare_arrows,
       size: 35,

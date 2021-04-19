@@ -6,7 +6,7 @@ enum LedStateStream { both, independent, group, empty }
 
 class DoubleStreamBuilder extends StatelessWidget {
   @override
-  DoubleStreamBuilder(
+  const DoubleStreamBuilder(
       {@required this.streamIndependent,
       @required this.streamGroup,
       @required this.builder});
