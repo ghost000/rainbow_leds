@@ -52,7 +52,8 @@ class LedState {
   }
 
   @override
-  bool operator ==(dynamic other) => other.name == name && other.color == color;
+  bool operator ==(dynamic other) =>
+      other.ledName == name && other.color == color;
 
   @override
   int get hashCode => name.hashCode + color.hashCode;

@@ -10,9 +10,9 @@ part 'bl_devices_bloc_event.dart';
 part 'bl_devices_bloc_state.dart';
 
 class Light {
-  String transmitUuid = 'f000aa61-0451-4000-b000-000000000000';
+  final String transmitUuid = 'f000aa61-0451-4000-b000-000000000000';
 
-  Map<String, int> packetTypes = {
+  final Map<String, int> packetTypes = {
     'set_color': 0xa1,
     'set_white': 0xaa,
     'power_off': 0xa3,
