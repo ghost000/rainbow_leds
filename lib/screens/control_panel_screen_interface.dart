@@ -24,6 +24,8 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
   bool testGroupFlag = false;
   Color groupInitialColor = Colors.amber;
   LedState ledState;
+  
+  CircleColorPickerController circleColorPickerController;
 
   @override
   Widget build(BuildContext context) {
@@ -185,6 +187,11 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
   }
 
   Widget buildColorPanel(BuildContext context) {
+        circleColorPickerController = CircleColorPickerController(
+      initialColor: ledStateEnum == LedStateEnum.independent
+            ? ledState.color
+            : groupInitialColor,
+    );
     return Center(
         child: Align(
             child: Column(children: [
@@ -192,9 +199,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
           color: Colors.transparent,
           height: MediaQuery.of(context).size.height / 20),
       CircleColorPicker(
-        initialColor: ledStateEnum == LedStateEnum.independent
-            ? ledState.color
-            : groupInitialColor,
+        controller: circleColorPickerController,
         size: Size(MediaQuery.of(context).size.height / 2.3,
             MediaQuery.of(context).size.height / 2.3),
         strokeWidth: 5,
