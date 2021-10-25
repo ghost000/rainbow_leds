@@ -20,6 +20,8 @@ class LightManager {
   bool running;
   int colorRGBFlafe;
 
+  //LightManager(){}
+
   LightManager(this.blCharacteristic, this.blDevice) {
     statesToFonctionMap = {
       //States.scan              : (  ){ light.scan();  },
