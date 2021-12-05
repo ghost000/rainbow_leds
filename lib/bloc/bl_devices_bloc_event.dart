@@ -47,7 +47,7 @@ class BlDevicesBlocEventGetAllLedsStates extends BlDevicesBlocEvent {
 class BlDevicesBlocEventAddToGroup extends BlDevicesBlocEvent {
   final LedState ledState;
 
-  const BlDevicesBlocEventAddToGroup(this.ledState);
+  const BlDevicesBlocEventAddToGroup({required this.ledState});
 
   @override
   List<Object> get props => [ledState];
@@ -61,7 +61,7 @@ class BlDevicesBlocEventAddToGroup extends BlDevicesBlocEvent {
 class BlDevicesBlocEventRemoveFromGroup extends BlDevicesBlocEvent {
   final LedState ledState;
 
-  const BlDevicesBlocEventRemoveFromGroup(this.ledState);
+  const BlDevicesBlocEventRemoveFromGroup({required this.ledState});
 
   @override
   List<Object> get props => [ledState];
@@ -75,7 +75,7 @@ class BlDevicesBlocEventRemoveFromGroup extends BlDevicesBlocEvent {
 class BlDevicesBlocEventAddToIndependent extends BlDevicesBlocEvent {
   final LedState ledState;
 
-  const BlDevicesBlocEventAddToIndependent(this.ledState);
+  const BlDevicesBlocEventAddToIndependent({required this.ledState});
 
   @override
   List<Object> get props => [ledState];
@@ -89,7 +89,7 @@ class BlDevicesBlocEventAddToIndependent extends BlDevicesBlocEvent {
 class BlDevicesBlocEventRemoveFromIndependent extends BlDevicesBlocEvent {
   final LedState ledState;
 
-  const BlDevicesBlocEventRemoveFromIndependent(this.ledState);
+  const BlDevicesBlocEventRemoveFromIndependent({required this.ledState});
 
   @override
   List<Object> get props => [ledState];
@@ -103,7 +103,7 @@ class BlDevicesBlocEventRemoveFromIndependent extends BlDevicesBlocEvent {
 class BlDevicesBlocEventAddToNotAssigned extends BlDevicesBlocEvent {
   final LedState ledState;
 
-  const BlDevicesBlocEventAddToNotAssigned(this.ledState);
+  const BlDevicesBlocEventAddToNotAssigned({required this.ledState});
 
   @override
   List<Object> get props => [ledState];
@@ -117,7 +117,7 @@ class BlDevicesBlocEventAddToNotAssigned extends BlDevicesBlocEvent {
 class BlDevicesBlocEventRemoveFromNotAssigned extends BlDevicesBlocEvent {
   final LedState ledState;
 
-  const BlDevicesBlocEventRemoveFromNotAssigned(this.ledState);
+  const BlDevicesBlocEventRemoveFromNotAssigned({required this.ledState});
 
   @override
   List<Object> get props => [ledState];
@@ -131,7 +131,7 @@ class BlDevicesBlocEventRemoveFromNotAssigned extends BlDevicesBlocEvent {
 class BlDevicesBlocEventUpdateIndependent extends BlDevicesBlocEvent {
   final LedState ledState;
 
-  const BlDevicesBlocEventUpdateIndependent(this.ledState);
+  const BlDevicesBlocEventUpdateIndependent({required this.ledState});
 
   @override
   List<Object> get props => [ledState];
@@ -145,7 +145,7 @@ class BlDevicesBlocEventUpdateIndependent extends BlDevicesBlocEvent {
 class BlDevicesBlocEventUpdateGroup extends BlDevicesBlocEvent {
   final LedState ledState;
 
-  const BlDevicesBlocEventUpdateGroup(this.ledState);
+  const BlDevicesBlocEventUpdateGroup({required this.ledState});
 
   @override
   List<Object> get props => [ledState];
@@ -160,7 +160,8 @@ class BlDevicesBlocEventConnect extends BlDevicesBlocEvent {
   final LedState ledState;
   final GroupOrIndependent groupOrIndependent;
 
-  const BlDevicesBlocEventConnect(this.ledState, this.groupOrIndependent);
+  const BlDevicesBlocEventConnect(
+      {required this.ledState, required this.groupOrIndependent});
 
   @override
   List<Object> get props => [ledState, groupOrIndependent];
@@ -175,7 +176,8 @@ class BlDevicesBlocEventDisconnect extends BlDevicesBlocEvent {
   final LedState ledState;
   final GroupOrIndependent groupOrIndependent;
 
-  const BlDevicesBlocEventDisconnect(this.ledState, this.groupOrIndependent);
+  const BlDevicesBlocEventDisconnect(
+      {required this.ledState, required this.groupOrIndependent});
 
   @override
   List<Object> get props => [ledState, groupOrIndependent];

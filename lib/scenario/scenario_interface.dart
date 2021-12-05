@@ -7,9 +7,8 @@ part 'scenario_the_same_group.dart';
 part 'scenario_different_group.dart';
 
 abstract class ScenarioInterface {
-  Map scenarioMap;
+  late Map scenarioMap;
 
   void addScenario(String scenarioName);
   void removeScenario(String scenarioName);
 }
-

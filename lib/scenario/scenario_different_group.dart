@@ -8,8 +8,8 @@ class ScenarioDifferentGroup implements ScenarioInterface {
     scenarioMap[scenarioName] = Map<String, Map<int, StepScenario>>();
   }
 
-  void addStep(String scenarioName, String ledName, Color color, States state, int degree,
-      Duration duration, bool activeInIndependent, int stepNumber) {
+  void addStep(String scenarioName, String ledName, Color color, States state,
+      int degree, Duration duration, bool activeInIndependent, int stepNumber) {
     scenarioMap[scenarioName] = {
       stepNumber: StepScenario(
           ledName: ledName,
@@ -24,8 +24,15 @@ class ScenarioDifferentGroup implements ScenarioInterface {
     scenarioMap.remove(scenarioName);
   }
 
-  void updateScenario(String scenarioName, String ledName, Color color, States state,
-      int degree, Duration duration, bool activeInIndependent, int stepNumber) {
+  void updateScenario(
+      String scenarioName,
+      String ledName,
+      Color color,
+      States state,
+      int degree,
+      Duration duration,
+      bool activeInIndependent,
+      int stepNumber) {
     scenarioMap[scenarioName][stepNumber] = StepScenario(
         ledName: ledName,
         color: color,

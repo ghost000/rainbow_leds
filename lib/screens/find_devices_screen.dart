@@ -101,11 +101,11 @@ Widget buildRefreshIndicator(BuildContext context) {
       ));
 }
 
-Widget buildScanResultsColumn(Set<LedState> scanResults,
+Widget buildScanResultsColumn(Set<LedState>? scanResults,
     LedStateEnum ledStateEnum, BuildContext context) {
   return Column(children: <Widget>[
     const Divider(color: Colors.black),
-    ...scanResults.map((scanResult) {
+    ...scanResults!.map((scanResult) {
       return buildTextAndButtons(scanResult, ledStateEnum, context);
     }).toList(),
   ]);
@@ -173,12 +173,14 @@ Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
       style: flatButtonStyle,
       onPressed: () {
         scanResult.setDeactivateInIndependent();
-        BlocProvider.of<BlDevicesBlocBloc>(context).add(
-            BlDevicesBlocEventAddToIndependent(LedState(
-                name: scanResult.name,
-                characteristic: scanResult.ledCharacteristic,
-                bluetoothDevice: scanResult.ledBluetoothDevice,
-                active: scanResult.activeInIndependent)));
+
+        var tmpLedState = LedState(
+            name: scanResult.name, active: scanResult.activeInIndependent);
+        tmpLedState.ledCharacteristic = scanResult.characteristic;
+        tmpLedState.ledBluetoothDevice = scanResult.ledBluetoothDevice;
+
+        BlocProvider.of<BlDevicesBlocBloc>(context)
+            .add(BlDevicesBlocEventAddToIndependent(ledState: tmpLedState));
       },
       child: const Text('ADD independent'),
     ),
@@ -191,12 +193,14 @@ Widget buildGroupFlatButton(LedState scanResult, BuildContext context) {
     child: TextButton(
       onPressed: () {
         scanResult.setDeactivateInIndependent();
-        BlocProvider.of<BlDevicesBlocBloc>(context).add(
-            BlDevicesBlocEventAddToGroup(LedState(
-                name: scanResult.name,
-                characteristic: scanResult.ledCharacteristic,
-                bluetoothDevice: scanResult.ledBluetoothDevice,
-                active: scanResult.activeInIndependent)));
+
+        var tmpLedState = LedState(
+            name: scanResult.name, active: scanResult.activeInIndependent);
+        tmpLedState.ledCharacteristic = scanResult.characteristic;
+        tmpLedState.ledBluetoothDevice = scanResult.ledBluetoothDevice;
+
+        BlocProvider.of<BlDevicesBlocBloc>(context)
+            .add(BlDevicesBlocEventAddToGroup(ledState: tmpLedState));
       },
       child: const Text('ADD Group'),
     ),
@@ -209,12 +213,14 @@ Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
     child: TextButton(
       onPressed: () {
         scanResult.setDeactivateInIndependent();
-        BlocProvider.of<BlDevicesBlocBloc>(context).add(
-            BlDevicesBlocEventAddToNotAssigned(LedState(
-                name: scanResult.name,
-                characteristic: scanResult.ledCharacteristic,
-                bluetoothDevice: scanResult.ledBluetoothDevice,
-                active: scanResult.activeInIndependent)));
+
+        var tmpLedState = LedState(
+            name: scanResult.name, active: scanResult.activeInIndependent);
+        tmpLedState.ledCharacteristic = scanResult.characteristic;
+        tmpLedState.ledBluetoothDevice = scanResult.ledBluetoothDevice;
+
+        BlocProvider.of<BlDevicesBlocBloc>(context)
+            .add(BlDevicesBlocEventAddToNotAssigned(ledState: tmpLedState));
       },
       child: const Text('ADD NotAssigned'),
     ),
@@ -225,7 +231,7 @@ Widget buildConnectDisconnectFlatButton(LedState scanResult,
     BuildContext context, GroupOrIndependent groupOrIndependent) {
   if (scanResult.ledBluetoothDevice != null) {
     return StreamBuilder<BluetoothDeviceState>(
-        stream: scanResult.ledBluetoothDevice.state,
+        stream: scanResult.ledBluetoothDevice!.state,
         initialData: BluetoothDeviceState.disconnected,
         builder: (context, snapshot) {
           if (snapshot.data == BluetoothDeviceState.disconnected) {
@@ -235,7 +241,8 @@ Widget buildConnectDisconnectFlatButton(LedState scanResult,
                 onPressed: () {
                   BlocProvider.of<BlDevicesBlocBloc>(context).add(
                       BlDevicesBlocEventConnect(
-                          scanResult, groupOrIndependent));
+                          ledState: scanResult,
+                          groupOrIndependent: groupOrIndependent));
                 },
                 child: const Text('Connect'),
               ),
@@ -247,7 +254,8 @@ Widget buildConnectDisconnectFlatButton(LedState scanResult,
                   onPressed: () {
                     BlocProvider.of<BlDevicesBlocBloc>(context).add(
                         BlDevicesBlocEventDisconnect(
-                            scanResult, groupOrIndependent));
+                            ledState: scanResult,
+                            groupOrIndependent: groupOrIndependent));
                   },
                   child: const Text('Disconnect'),
                 ));
@@ -269,7 +277,7 @@ Widget buildFloatingActionButtonFromDuobleStreams(BuildContext context) {
 }
 
 Widget buildFloatingButtonFromDoubleStreams(
-    BuildContext context, LedStateStream ledStateStream) {
+    BuildContext context, LedStateStream? ledStateStream) {
   if (ledStateStream == LedStateStream.both) {
     return FloatingActionButton.extended(
       onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)

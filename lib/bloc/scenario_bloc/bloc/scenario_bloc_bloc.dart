@@ -10,7 +10,11 @@ part 'scenario_bloc_event.dart';
 part 'scenario_bloc_state.dart';
 
 class ScenarioBloc extends Bloc<ScenarioBlocEvent, ScenarioBlocState> {
-  ScenarioBloc() : super(ScenarioBlocStateInitial());
+  ScenarioBloc() : super(ScenarioBlocStateInitial()) {
+    on<ScenarioBlocEventInitial>((event, emit) {
+      emit(ScenarioBlocStateInitial());
+    });
+  }
 
   ScenarioIndependent scenarioIndependent = ScenarioIndependent();
   ScenarioTheSameGroup scenarioTheSameGroup = ScenarioTheSameGroup();
@@ -18,7 +22,8 @@ class ScenarioBloc extends Bloc<ScenarioBlocEvent, ScenarioBlocState> {
 
   final BehaviorSubject<ScenarioIndependent> _scenarioIndependent =
       BehaviorSubject.seeded(ScenarioIndependent());
-  Stream<ScenarioIndependent> get groupLedsStatesStream => _scenarioIndependent.stream;
+  Stream<ScenarioIndependent> get groupLedsStatesStream =>
+      _scenarioIndependent.stream;
 
   final BehaviorSubject<ScenarioTheSameGroup> _scenarioTheSameGroup =
       BehaviorSubject.seeded(ScenarioTheSameGroup());
@@ -30,18 +35,11 @@ class ScenarioBloc extends Bloc<ScenarioBlocEvent, ScenarioBlocState> {
   Stream<ScenarioDifferentGroup> get notAssignedLedsStatesStream =>
       _scenarioDifferentGroup.stream;
 
- @override
+  @override
   Future<void> close() {
     _scenarioIndependent.close();
     _scenarioTheSameGroup.close();
     _scenarioDifferentGroup.close();
     return super.close();
-  }
-
-  @override
-  Stream<ScenarioBlocState> mapEventToState(ScenarioBlocEvent event) async* {
-    if (event is ScenarioBlocEventInitial) {
-      yield ScenarioBlocStateInitial();
-    }
   }
 }

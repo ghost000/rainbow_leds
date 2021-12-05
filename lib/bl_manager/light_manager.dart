@@ -8,33 +8,41 @@ import 'package:flutter_blue/flutter_blue.dart';
 import '../bloc/led_state.dart' show States;
 
 class LightManager {
-  BluetoothCharacteristic blCharacteristic;
-  BluetoothDevice blDevice;
-  List<List<int>> sectionList;
-  Map statesToFonctionMap;
-  ReceivePort receivePort;
-  Isolate isolate;
-  int color;
-  bool isUp;
-  int iter;
-  bool running;
-  int colorRGBFlafe;
+  BluetoothCharacteristic? blCharacteristic;
+  BluetoothDevice? blDevice;
+  List<List<int>> sectionList = [
+    [1, 0, 0],
+    [1, 1, 0],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 0, 1],
+    [1, 0, 1],
+  ];
+
+  late Map statesToFonctionMap;
+  ReceivePort receivePort = ReceivePort();
+  int color = 0;
+  bool isUp = true;
+  int iter = 0;
+  bool running = false;
+  int colorRGBFlafe = 0;
+  late Isolate isolate;
 
   //LightManager(){}
 
-  LightManager(this.blCharacteristic, this.blDevice) {
-    statesToFonctionMap = {
+  LightManager() {
+    this.statesToFonctionMap = {
       //States.scan              : (  ){ light.scan();  },
-      States.rgb: ({Color color}) {
+      States.rgb: ({required Color color}) {
         sendPacket(0xa1, color);
       },
-      States.whiteCoolGradual: ({int degree}) {
+      States.whiteCoolGradual: ({required int degree}) {
         sendPacketWhite(degree, 0);
       },
-      States.whiteRGBGradual: ({int degree}) {
+      States.whiteRGBGradual: ({required int degree}) {
         sendPacketWhite(0, degree);
       },
-      States.whiteCoolAndWarmGradual: ({int degree}) {
+      States.whiteCoolAndWarmGradual: ({required int degree}) {
         sendPacketWhite(degree, degree);
       },
       States.whiteRGB: () {
@@ -59,21 +67,6 @@ class LightManager {
       States.connect: connect,
       States.disconnect: disconnect,
     };
-
-    sectionList = [
-      [1, 0, 0],
-      [1, 1, 0],
-      [0, 1, 0],
-      [0, 1, 1],
-      [0, 0, 1],
-      [1, 0, 1],
-    ];
-
-    colorRGBFlafe = 0;
-    color = 0;
-    isUp = true;
-    iter = 0;
-    running = false;
   }
 
   @override
@@ -81,20 +74,16 @@ class LightManager {
     return 'LightManager BluetoothCharacteristic: $blCharacteristic, BluetoothDevice: $blDevice.';
   }
 
-  BluetoothCharacteristic get characteristic => blCharacteristic;
+  BluetoothCharacteristic? get characteristic => blCharacteristic;
 
-  set characteristic(BluetoothCharacteristic characteristic) {
-    if (characteristic != null) {
-      this.characteristic = characteristic;
-    }
+  set characteristic(BluetoothCharacteristic? characteristic) {
+    characteristic = characteristic;
   }
 
-  BluetoothDevice get bluetoothDevice => blDevice;
+  BluetoothDevice? get bluetoothDevice => blDevice;
 
-  set bluetoothDevice(BluetoothDevice bluetoothDevice) {
-    if (bluetoothDevice != null) {
-      blDevice = bluetoothDevice;
-    }
+  set bluetoothDevice(BluetoothDevice? bluetoothDevice) {
+    blDevice = bluetoothDevice;
   }
 
   Future<void> sendPacket(int cmd, Color color) async {
@@ -107,8 +96,12 @@ class LightManager {
     bdata.setUint8(4, color.blue);
     bdata.setUint8(5, 0x56);
 
-    await blCharacteristic.write(bdata.buffer.asUint8List(),
-        withoutResponse: true);
+    if (blCharacteristic == null) {
+      return;
+    }
+
+    await blCharacteristic!
+        .write(bdata.buffer.asUint8List(), withoutResponse: true);
   }
 
   Future<void> sendPacketWhite(int coolWhite, int warmWhite) async {
@@ -121,8 +114,12 @@ class LightManager {
     bdata.setUint8(4, warmWhite);
     bdata.setUint8(5, 0x56);
 
-    await blCharacteristic.write(bdata.buffer.asUint8List(),
-        withoutResponse: true);
+    if (blCharacteristic == null) {
+      return;
+    }
+
+    await blCharacteristic!
+        .write(bdata.buffer.asUint8List(), withoutResponse: true);
   }
 
   void updateRGBRainbow() {
@@ -192,11 +189,11 @@ class LightManager {
   }
 
   Future<void> disconnect() async {
-    await blDevice.disconnect();
+    await blDevice!.disconnect();
   }
 
   Future<void> connect() async {
-    await blDevice.connect();
+    await blDevice!.connect();
   }
 
   Future<void> changeStateAndUpdate(
@@ -229,11 +226,10 @@ class LightManager {
   }
 
   void clearIsolateIfNeeded() {
-    if (running && isolate != null) {
+    if (running) {
       running = false;
       receivePort.close();
       isolate.kill(priority: Isolate.immediate);
-      isolate = null;
     }
   }
 

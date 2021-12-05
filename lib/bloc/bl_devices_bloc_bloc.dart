@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:logger/logger.dart';
 
 import 'led_state.dart';
 
@@ -21,6 +22,36 @@ class Light {
 
 class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
   BlDevicesBlocBloc() : super(BlDevicesBlocStateInitial()) {
+    on<BlDevicesBlocEventAddToGroup>(_mapLedStateAddedToGroupToState);
+    on<BlDevicesBlocEventRemoveFromGroup>(_mapLedStateRemovedFromGroupToState);
+    on<BlDevicesBlocEventAddToIndependent>(_mapLedStateAddedToIndependentState);
+    on<BlDevicesBlocEventRemoveFromIndependent>(
+        _mapLedStateRemovedFromIndependentToState);
+    on<BlDevicesBlocEventAddToNotAssigned>(
+        _mapLedStateAddedToNotAssignedToState);
+    on<BlDevicesBlocEventRemoveFromNotAssigned>(
+        _mapLedStateRemovedFromNotAssignedToState);
+    on<BlDevicesBlocEventGetGroupLedsStates>((event, emit) {
+      emit(BlDevicesBlocStateGroup(groupLedsStates.toList()));
+    });
+    on<BlDevicesBlocEventGetIndependentLedsStates>((event, emit) {
+      emit(BlDevicesBlocStateIndependent(independentLedsStates.toList()));
+    });
+    on<BlDevicesBlocEventGetAllLedsStates>((event, emit) {
+      emit(BlDevicesBlocStateAll(groupLedsStates.toList(),
+          independentLedsStates.toList(), notAssignedLedsStates.toList()));
+    });
+    on<BlDevicesBlocEventInitial>((event, emit) {
+      emit(BlDevicesBlocStateInitial());
+    });
+    on<BlDevicesBlocEventScan>((event, emit) {
+      emit(BlDevicesBlocStateScan());
+    });
+    on<BlDevicesBlocEventUpdateIndependent>(_mapLedStateUpdateIndependent);
+    on<BlDevicesBlocEventUpdateGroup>(_mapLedStateUpdateGroup);
+    on<BlDevicesBlocEventConnect>(_mapLedStateConnect);
+    on<BlDevicesBlocEventDisconnect>(_mapLedStateDisconnect);
+
     listenFlutterBlueDebug();
   }
 
@@ -44,8 +75,8 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
   Future<void> listenFlutterBlueDebug() async {
     FlutterBlue.instance.scanResults.listen((event) async {
       for (final scanResult in event) {
-        if (scanResult.device.id.id != null &&
-                scanResult.device.id.id.isNotEmpty //&&
+        //if (scanResult.device.id.id != null &&
+        if (scanResult.device.id.id.isNotEmpty //&&
             //scanResult.device.name.contains('YONGNUO')) { // TODO search case for releasing. I will add console argument to manage this.
             ) {
           if (groupLedsStates
@@ -57,9 +88,14 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
               notAssignedLedsStates
                   .where((element) => element.name == scanResult.device.id.id)
                   .isEmpty) {
-            add(BlDevicesBlocEventAddToNotAssigned(LedState(
+            var tempLedState = LedState(
                 name: scanResult.device.id.id,
-                bluetoothDevice: scanResult.device)));
+                active: false,
+                color: const Color(0xFF000000),
+                degree: 0,
+                state: States.empty);
+            tempLedState.ledBluetoothDevice = scanResult.device;
+            add(BlDevicesBlocEventAddToNotAssigned(ledState: tempLedState));
           }
         }
       }
@@ -123,46 +159,46 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
     return super.close();
   }
 
-  @override
-  Stream<BlDevicesBlocState> mapEventToState(
-    BlDevicesBlocEvent event,
-  ) async* {
-    if (event is BlDevicesBlocEventAddToGroup) {
-      yield* _mapLedStateAddedToGroupToState(event);
-    } else if (event is BlDevicesBlocEventRemoveFromGroup) {
-      yield* _mapLedStateRemovedFromGroupToState(event);
-    } else if (event is BlDevicesBlocEventAddToIndependent) {
-      yield* _mapLedStateAddedToIndependentState(event);
-    } else if (event is BlDevicesBlocEventRemoveFromIndependent) {
-      yield* _mapLedStateRemovedFromIndependentToState(event);
-    } else if (event is BlDevicesBlocEventAddToNotAssigned) {
-      yield* _mapLedStateAddedToNotAssignedToState(event);
-    } else if (event is BlDevicesBlocEventRemoveFromNotAssigned) {
-      yield* _mapLedStateRemovedFromNotAssignedToState(event);
-    } else if (event is BlDevicesBlocEventGetGroupLedsStates) {
-      yield BlDevicesBlocStateGroup(groupLedsStates.toList());
-    } else if (event is BlDevicesBlocEventGetIndependentLedsStates) {
-      yield BlDevicesBlocStateIndependent(independentLedsStates.toList());
-    } else if (event is BlDevicesBlocEventGetAllLedsStates) {
-      yield BlDevicesBlocStateAll(groupLedsStates.toList(),
-          independentLedsStates.toList(), notAssignedLedsStates.toList());
-    } else if (event is BlDevicesBlocEventInitial) {
-      yield BlDevicesBlocStateInitial();
-    } else if (event is BlDevicesBlocEventScan) {
-      yield BlDevicesBlocStateScan(); //TODO add scaning in this state [FEATURE]
-    } else if (event is BlDevicesBlocEventUpdateIndependent) {
-      yield* _mapLedStateUpdateIndependent(event);
-    } else if (event is BlDevicesBlocEventUpdateGroup) {
-      yield* _mapLedStateUpdateGroup(event);
-    } else if (event is BlDevicesBlocEventConnect) {
-      yield* _mapLedStateConnect(event);
-    } else if (event is BlDevicesBlocEventDisconnect) {
-      yield* _mapLedStateDisconnect(event);
-    }
-  }
+  // @override
+  // Stream<BlDevicesBlocState> mapEventToState(
+  //   BlDevicesBlocEvent event,
+  // ) async* {
+  //   if (event is BlDevicesBlocEventAddToGroup) {
+  //     yield* _mapLedStateAddedToGroupToState(event);
+  //   } else if (event is BlDevicesBlocEventRemoveFromGroup) {
+  //     yield* _mapLedStateRemovedFromGroupToState(event);
+  //   } else if (event is BlDevicesBlocEventAddToIndependent) {
+  //     yield* _mapLedStateAddedToIndependentState(event);
+  //   } else if (event is BlDevicesBlocEventRemoveFromIndependent) {
+  //     yield* _mapLedStateRemovedFromIndependentToState(event);
+  //   } else if (event is BlDevicesBlocEventAddToNotAssigned) {
+  //     yield* _mapLedStateAddedToNotAssignedToState(event);
+  //   } else if (event is BlDevicesBlocEventRemoveFromNotAssigned) {
+  //     yield* _mapLedStateRemovedFromNotAssignedToState(event);
+  //   } else if (event is BlDevicesBlocEventGetGroupLedsStates) {
+  //     yield BlDevicesBlocStateGroup(groupLedsStates.toList());
+  //   } else if (event is BlDevicesBlocEventGetIndependentLedsStates) {
+  //     yield BlDevicesBlocStateIndependent(independentLedsStates.toList());
+  //   } else if (event is BlDevicesBlocEventGetAllLedsStates) {
+  //     yield BlDevicesBlocStateAll(groupLedsStates.toList(),
+  //         independentLedsStates.toList(), notAssignedLedsStates.toList());
+  //   } else if (event is BlDevicesBlocEventInitial) {
+  //     yield BlDevicesBlocStateInitial();
+  //   } else if (event is BlDevicesBlocEventScan) {
+  //     yield BlDevicesBlocStateScan(); //TODO add scaning in this state [FEATURE]
+  //   } else if (event is BlDevicesBlocEventUpdateIndependent) {
+  //     yield* _mapLedStateUpdateIndependent(event);
+  //   } else if (event is BlDevicesBlocEventUpdateGroup) {
+  //     yield* _mapLedStateUpdateGroup(event);
+  //   } else if (event is BlDevicesBlocEventConnect) {
+  //     yield* _mapLedStateConnect(event);
+  //   } else if (event is BlDevicesBlocEventDisconnect) {
+  //     yield* _mapLedStateDisconnect(event);
+  //   }
+  // }
 
-  Stream<BlDevicesBlocState> _mapLedStateAddedToGroupToState(
-      BlDevicesBlocEventAddToGroup event) async* {
+  void _mapLedStateAddedToGroupToState(
+      BlDevicesBlocEventAddToGroup event, Emitter<BlDevicesBlocState> emit) {
     try {
       groupLedsStates.add(event.ledState);
       notAssignedLedsStates.remove(event.ledState);
@@ -170,25 +206,27 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       _notAssignedLedsStates.add(notAssignedLedsStates);
       _independentLedsStates.add(independentLedsStates);
       _groupLedsStates.add(groupLedsStates);
-      yield BlDevicesBlocStateLoadGroup(groupLedsStates.toList());
+      return emit(BlDevicesBlocStateLoadGroup(groupLedsStates.toList()));
     } catch (_) {
-      yield BlDevicesBlocStateLoadFailure();
+      return emit(BlDevicesBlocStateLoadFailure());
     }
   }
 
-  Stream<BlDevicesBlocState> _mapLedStateRemovedFromGroupToState(
-      BlDevicesBlocEventRemoveFromGroup event) async* {
+  Future<void> _mapLedStateRemovedFromGroupToState(
+      BlDevicesBlocEventRemoveFromGroup event,
+      Emitter<BlDevicesBlocState> emit) async {
     try {
       groupLedsStates.remove(event.ledState);
       _groupLedsStates.add(groupLedsStates);
-      yield BlDevicesBlocStateLoadGroup(groupLedsStates.toList());
+      return emit(BlDevicesBlocStateLoadGroup(groupLedsStates.toList()));
     } catch (_) {
-      yield BlDevicesBlocStateLoadFailure();
+      return emit(BlDevicesBlocStateLoadFailure());
     }
   }
 
-  Stream<BlDevicesBlocState> _mapLedStateAddedToIndependentState(
-      BlDevicesBlocEventAddToIndependent event) async* {
+  Future<void> _mapLedStateAddedToIndependentState(
+      BlDevicesBlocEventAddToIndependent event,
+      Emitter<BlDevicesBlocState> emit) async {
     try {
       independentLedsStates.add(event.ledState);
       groupLedsStates.remove(event.ledState);
@@ -196,51 +234,63 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       _notAssignedLedsStates.add(notAssignedLedsStates);
       _independentLedsStates.add(independentLedsStates);
       _groupLedsStates.add(groupLedsStates);
-      yield BlDevicesBlocStateLoadIndependent(independentLedsStates.toList());
+      return emit(
+          BlDevicesBlocStateLoadIndependent(independentLedsStates.toList()));
     } catch (_) {
-      yield BlDevicesBlocStateLoadFailure();
+      return emit(BlDevicesBlocStateLoadFailure());
     }
   }
 
-  Stream<BlDevicesBlocState> _mapLedStateRemovedFromIndependentToState(
-      BlDevicesBlocEventRemoveFromIndependent event) async* {
+  Future<void> _mapLedStateRemovedFromIndependentToState(
+      BlDevicesBlocEventRemoveFromIndependent event,
+      Emitter<BlDevicesBlocState> emit) async {
     try {
       independentLedsStates.remove(event.ledState);
       _independentLedsStates.add(independentLedsStates);
-      yield BlDevicesBlocStateLoadIndependent(independentLedsStates.toList());
+      return emit(
+          BlDevicesBlocStateLoadIndependent(independentLedsStates.toList()));
     } catch (_) {
-      yield BlDevicesBlocStateLoadFailure();
+      return emit(BlDevicesBlocStateLoadFailure());
     }
   }
 
-  Stream<BlDevicesBlocState> _mapLedStateAddedToNotAssignedToState(
-      BlDevicesBlocEventAddToNotAssigned event) async* {
+  void _mapLedStateAddedToNotAssignedToState(
+      BlDevicesBlocEventAddToNotAssigned event,
+      Emitter<BlDevicesBlocState> emit) {
     try {
+      var logger = Logger();
+
+      logger.d(event);
+      logger.e(event.ledState);
       notAssignedLedsStates.add(event.ledState);
       independentLedsStates.remove(event.ledState);
       groupLedsStates.remove(event.ledState);
       _notAssignedLedsStates.add(notAssignedLedsStates);
       _independentLedsStates.add(independentLedsStates);
       _groupLedsStates.add(groupLedsStates);
-      yield BlDevicesBlocStateLoadNotAssigned(notAssignedLedsStates.toList());
+      return emit(
+          BlDevicesBlocStateLoadNotAssigned(notAssignedLedsStates.toList()));
     } catch (_) {
-      yield BlDevicesBlocStateLoadFailure();
+      return emit(BlDevicesBlocStateLoadFailure());
     }
   }
 
-  Stream<BlDevicesBlocState> _mapLedStateRemovedFromNotAssignedToState(
-      BlDevicesBlocEventRemoveFromNotAssigned event) async* {
+  Future<void> _mapLedStateRemovedFromNotAssignedToState(
+      BlDevicesBlocEventRemoveFromNotAssigned event,
+      Emitter<BlDevicesBlocState> emit) async {
     try {
       notAssignedLedsStates.remove(event.ledState);
       _notAssignedLedsStates.add(notAssignedLedsStates);
-      yield BlDevicesBlocStateLoadNotAssigned(notAssignedLedsStates.toList());
+      return emit(
+          BlDevicesBlocStateLoadNotAssigned(notAssignedLedsStates.toList()));
     } catch (_) {
-      yield BlDevicesBlocStateLoadFailure();
+      return emit(BlDevicesBlocStateLoadFailure());
     }
   }
 
-  Stream<BlDevicesBlocState> _mapLedStateUpdateIndependent(
-      BlDevicesBlocEventUpdateIndependent event) async* {
+  Future<void> _mapLedStateUpdateIndependent(
+      BlDevicesBlocEventUpdateIndependent event,
+      Emitter<BlDevicesBlocState> emit) async {
     try {
       for (final ledState in independentLedsStates) {
         if (ledState.name == event.ledState.name) {
@@ -248,31 +298,32 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
         }
       }
       _independentLedsStates.add(independentLedsStates);
-      yield BlDevicesBlocStateUpdateIndependent(independentLedsStates.toList());
+      return emit(
+          BlDevicesBlocStateUpdateIndependent(independentLedsStates.toList()));
     } catch (_) {
-      yield BlDevicesBlocStateLoadFailure();
+      return emit(BlDevicesBlocStateLoadFailure());
     }
   }
 
-  Stream<BlDevicesBlocState> _mapLedStateUpdateGroup(
-      BlDevicesBlocEventUpdateGroup event) async* {
+  Future<void> _mapLedStateUpdateGroup(BlDevicesBlocEventUpdateGroup event,
+      Emitter<BlDevicesBlocState> emit) async {
     try {
       for (final ledState in groupLedsStates) {
         updateLeStateParam(event.ledState, ledState);
       }
       _groupLedsStates.add(groupLedsStates);
-      yield BlDevicesBlocStateUpdateGroup(groupLedsStates.toList());
+      return emit(BlDevicesBlocStateUpdateGroup(groupLedsStates.toList()));
     } catch (_) {
-      yield BlDevicesBlocStateLoadFailure();
+      return emit(BlDevicesBlocStateLoadFailure());
     }
   }
 
-  Stream<BlDevicesBlocState> _mapLedStateConnect(
-      BlDevicesBlocEventConnect event) async* {
+  Future<void> _mapLedStateConnect(
+      BlDevicesBlocEventConnect event, Emitter<BlDevicesBlocState> emit) async {
     try {
       BluetoothCharacteristic characteristic;
-      await event.ledState.ledBluetoothDevice.connect();
-      await event.ledState.ledBluetoothDevice.discoverServices().then((value) {
+      await event.ledState.ledBluetoothDevice!.connect();
+      await event.ledState.ledBluetoothDevice!.discoverServices().then((value) {
         for (final element in value) {
           for (final characteristicElement in element.characteristics) {
             if (characteristicElement.uuid.toString() == transmitUuid) {
@@ -296,65 +347,61 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
         }
       });
       if (event.groupOrIndependent == GroupOrIndependent.group) {
-        yield BlDevicesBlocStateConnect(groupLedsStates.toList());
+        return emit(BlDevicesBlocStateConnect(groupLedsStates.toList()));
       } else if (event.groupOrIndependent == GroupOrIndependent.independent) {
-        yield BlDevicesBlocStateConnect(independentLedsStates.toList());
+        return emit(BlDevicesBlocStateConnect(independentLedsStates.toList()));
       }
     } catch (_) {
-      yield BlDevicesBlocStateLoadFailure();
+      return emit(BlDevicesBlocStateLoadFailure());
     }
   }
 
-  Stream<BlDevicesBlocState> _mapLedStateDisconnect(
-      BlDevicesBlocEventDisconnect event) async* {
+  Future<void> _mapLedStateDisconnect(BlDevicesBlocEventDisconnect event,
+      Emitter<BlDevicesBlocState> emit) async {
     try {
       //TODO implement removing ledState afetr disconnect
-      await event.ledState.ledBluetoothDevice.disconnect();
+      await event.ledState.ledBluetoothDevice!.disconnect();
       if (event.groupOrIndependent == GroupOrIndependent.group) {
         // groupLedsStates.remove(event.ledState);
         // _groupLedsStates.add(groupLedsStates);
         // notAssignedLedsStates.add(event.ledState);
         // _notAssignedLedsStates.add(notAssignedLedsStates);
-        yield BlDevicesBlocStateDisconnect(groupLedsStates.toList());
+        return emit(BlDevicesBlocStateDisconnect(groupLedsStates.toList()));
       } else if (event.groupOrIndependent == GroupOrIndependent.independent) {
         // independentLedsStates.remove(event.ledState);
         // _independentLedsStates.add(independentLedsStates);
         // notAssignedLedsStates.add(event.ledState);
         // _notAssignedLedsStates.add(notAssignedLedsStates);
-        yield BlDevicesBlocStateDisconnect(independentLedsStates.toList());
+        return emit(
+            BlDevicesBlocStateDisconnect(independentLedsStates.toList()));
       }
     } catch (_) {
-      yield BlDevicesBlocStateLoadFailure();
+      return emit(BlDevicesBlocStateLoadFailure());
     }
   }
 
   void updateLeStateParam(LedState eventLedState, LedState ledState) {
     var update = false;
-    if (eventLedState.activeInIndependent != null &&
-        eventLedState.activeInIndependent != ledState.activeInIndependent &&
+    if (eventLedState.activeInIndependent != ledState.activeInIndependent &&
         eventLedState.state == States.active) {
       ledState.activeInIndependent = eventLedState.activeInIndependent;
       update = false;
     }
-    if (eventLedState.ledCharacteristic != null &&
-        eventLedState.ledCharacteristic != ledState.ledCharacteristic) {
-      ledState.ledCharacteristic = eventLedState.ledCharacteristic;
+    if (eventLedState.characteristic != ledState.characteristic) {
+      ledState.ledCharacteristic = eventLedState.characteristic;
     }
-    if (eventLedState.color != null &&
-        eventLedState.color != const Color(0xFFFFFFFF) &&
+    if (eventLedState.color != const Color(0xFFFFFFFF) &&
         eventLedState.color != ledState.color) {
       ledState.color = eventLedState.color;
       update = true;
     }
-    if (eventLedState.state != null &&
-        eventLedState.state != States.empty &&
+    if (eventLedState.state != States.empty &&
         eventLedState.state != ledState.state &&
         eventLedState.state != States.active) {
       ledState.ledState = eventLedState.state;
       update = true;
     }
-    if (eventLedState.degree != null &&
-        eventLedState.degree != ledState.degree) {
+    if (eventLedState.degree != ledState.degree) {
       ledState.degree = eventLedState.degree;
       update = true;
     }

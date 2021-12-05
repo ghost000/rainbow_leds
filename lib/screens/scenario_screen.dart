@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rainbow_leds/screens/bluetooth_off_screen.dart';
 
 class ScenarioSetterScreen extends StatefulWidget {
-  const ScenarioSetterScreen({Key key}) : super(key: key);
+  const ScenarioSetterScreen({Key? key}) : super(key: key);
   @override
   State<StatefulWidget> createState() => ScenarioSetterScreenState();
 }

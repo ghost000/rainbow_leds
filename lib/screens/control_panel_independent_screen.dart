@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rainbow_leds/screens/control_panel_screen_interface.dart';
 
 class ControlPanelIndependentScreen extends ControlPanelScreenInterface {
-  const ControlPanelIndependentScreen({Key key}) : super(key: key);
+  const ControlPanelIndependentScreen({Key? key}) : super(key: key);
   @override
   _ControlPanelIndependentScreenState createState() =>
       _ControlPanelIndependentScreenState();

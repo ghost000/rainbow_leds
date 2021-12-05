@@ -10,19 +10,21 @@ import 'screens/find_devices_screen.dart';
 import 'screens/scenario_screen.dart';
 
 void main() {
-  Bloc.observer = SimpleBlocObserver();
-  runApp(
-    MultiBlocProvider(
-      providers: [
-        BlocProvider<BlDevicesBlocBloc>(
-          create: (BuildContext context) => BlDevicesBlocBloc(),
-        ),
-        BlocProvider<AppStateBlocBloc>(
-          create: (BuildContext context) => AppStateBlocBloc(),
-        ),
-      ],
-      child: RainbowLedsApp(),
+  BlocOverrides.runZoned(
+    () => runApp(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<BlDevicesBlocBloc>(
+            create: (BuildContext context) => BlDevicesBlocBloc(),
+          ),
+          BlocProvider<AppStateBlocBloc>(
+            create: (BuildContext context) => AppStateBlocBloc(),
+          ),
+        ],
+        child: RainbowLedsApp(),
+      ),
     ),
+    blocObserver: SimpleBlocObserver(),
   );
 }
 
@@ -47,14 +49,14 @@ class _RainbowLedsApp extends State<RainbowLedsApp> {
       themeMode: ThemeMode.dark,
       routes: {
         '/': (context) => FindDevicesScreen(),
-        '/BluetoothOffScreen': (context) => const BluetoothOffScreen(),
+        '/BluetoothOffScreen': (context) =>
+            BluetoothOffScreen(key: null, state: null),
         '/ControlPanelIndependentAndGroupScreen': (context) =>
-            const ControlPanelIndependentAndGroupScreen(),
+            ControlPanelIndependentAndGroupScreen(),
         '/ControlPanelIndependentScreen': (context) =>
-            const ControlPanelIndependentScreen(),
-        '/ControlPanelGroupScreen': (context) =>
-            const ControlPanelGroupScreen(),
-        '/ScenarioSetterScreen': (context) => const ScenarioSetterScreen(),
+            ControlPanelIndependentScreen(),
+        '/ControlPanelGroupScreen': (context) => ControlPanelGroupScreen(),
+        '/ScenarioSetterScreen': (context) => ScenarioSetterScreen(),
       },
       initialRoute: '/',
     );

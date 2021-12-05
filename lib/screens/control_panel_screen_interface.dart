@@ -6,7 +6,7 @@ import 'package:rainbow_leds/screens/bluetooth_off_screen.dart';
 import 'package:flutter_circle_color_picker/flutter_circle_color_picker.dart';
 
 class ControlPanelScreenInterface extends StatefulWidget {
-  const ControlPanelScreenInterface({Key key}) : super(key: key);
+  const ControlPanelScreenInterface({Key? key}) : super(key: key);
   @override
   ControlPanelScreenInterfaceState createState() =>
       ControlPanelScreenInterfaceState();
@@ -15,17 +15,17 @@ class ControlPanelScreenInterface extends StatefulWidget {
 class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
     extends State<T> {
   String titleName = 'Control Panel.';
-  int value;
-  States stateForWhite;
+  int value = 0;
+  States stateForWhite = States.empty;
   LedStateEnum ledStateEnum = LedStateEnum.independent;
   int selectedIndexIndependent = 0;
   int selectedIndexGroup = 0;
   bool testIndependentFlag = false;
   bool testGroupFlag = false;
   Color groupInitialColor = Colors.amber;
-  LedState ledState;
-  
-  CircleColorPickerController circleColorPickerController;
+  late LedState ledState;
+
+  late CircleColorPickerController circleColorPickerController;
 
   @override
   Widget build(BuildContext context) {
@@ -126,17 +126,15 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
             physics: const NeverScrollableScrollPhysics(),
             children: [
               if (selectedIndexIndependent == 0) buildColorPanel(context),
-              if (selectedIndexIndependent == 1)
-                buildButtonsWhite(snapshot.data, context),
-              if (selectedIndexIndependent == 2)
-                buildScenarioButtons(snapshot.data),
+              if (selectedIndexIndependent == 1) buildButtonsWhite(context),
+              if (selectedIndexIndependent == 2) buildScenarioButtons(),
             ],
           );
         });
   }
 
-  void getActiveLedOrCheckFirst(Set<LedState> ledStates) {
-    for (final _ledState in ledStates) {
+  void getActiveLedOrCheckFirst(Set<LedState>? ledStates) {
+    for (final _ledState in ledStates!) {
       if (_ledState.activeInIndependent) {
         ledState = _ledState;
         return;
@@ -145,13 +143,14 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
     ledState = ledStates.first;
     ledState.setActiveInIndependent();
     BlocProvider.of<BlDevicesBlocBloc>(context).add(
-        BlDevicesBlocEventUpdateIndependent(LedState(
-            name: ledState.name, active: ledState.activeInIndependent)));
+        BlDevicesBlocEventUpdateIndependent(
+            ledState: LedState(
+                name: ledState.name, active: ledState.activeInIndependent)));
   }
 
   void addPostBuildCallbackToSetSelectedOrFirstLedName() {
     if (!testIndependentFlag && ledState.name.isNotEmpty) {
-      WidgetsBinding.instance
+      WidgetsBinding.instance!
           .addPostFrameCallback((_) => setTitleNameAfterBuildIndependent());
     }
   }
@@ -160,12 +159,13 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
     setState(() => ledState.color = color);
     BlocProvider.of<BlDevicesBlocBloc>(context).add(
         BlDevicesBlocEventUpdateIndependent(
-            LedState(name: ledState.name, color: color, state: States.rgb)));
+            ledState: LedState(
+                name: ledState.name, color: color, state: States.rgb)));
   }
 
   Widget buildGroupControler(BuildContext context) {
     if (!testGroupFlag) {
-      WidgetsBinding.instance
+      WidgetsBinding.instance!
           .addPostFrameCallback((_) => setTitleNameAfterBuildGroup());
     }
     return StreamBuilder(
@@ -178,19 +178,18 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
             physics: const NeverScrollableScrollPhysics(),
             children: [
               if (selectedIndexGroup == 0) buildColorPanel(context),
-              if (selectedIndexGroup == 1)
-                buildButtonsWhite(snapshot.data, context),
-              if (selectedIndexGroup == 2) buildScenarioButtons(snapshot.data),
+              if (selectedIndexGroup == 1) buildButtonsWhite(context),
+              if (selectedIndexGroup == 2) buildScenarioButtons(),
             ],
           );
         });
   }
 
   Widget buildColorPanel(BuildContext context) {
-        circleColorPickerController = CircleColorPickerController(
+    circleColorPickerController = CircleColorPickerController(
       initialColor: ledStateEnum == LedStateEnum.independent
-            ? ledState.color
-            : groupInitialColor,
+          ? ledState.color
+          : groupInitialColor,
     );
     return Center(
         child: Align(
@@ -225,7 +224,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
     setState(() => groupInitialColor = color);
     BlocProvider.of<BlDevicesBlocBloc>(context).add(
         BlDevicesBlocEventUpdateGroup(
-            LedState(color: color, state: States.rgb)));
+            ledState: LedState(color: color, state: States.rgb)));
   }
 
   void whiteUpdate() {
@@ -234,17 +233,20 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
         stateForWhite == States.whiteCoolAndWarmGradual) {
       if (ledStateEnum == LedStateEnum.independent) {
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
-            BlDevicesBlocEventUpdateIndependent(LedState(
-                name: ledState.ledName, state: stateForWhite, degree: value)));
+            BlDevicesBlocEventUpdateIndependent(
+                ledState: LedState(
+                    name: ledState.ledName,
+                    state: stateForWhite,
+                    degree: value)));
       } else if (ledStateEnum == LedStateEnum.group) {
         BlocProvider.of<BlDevicesBlocBloc>(context).add(
             BlDevicesBlocEventUpdateGroup(
-                LedState(state: stateForWhite, degree: value)));
+                ledState: LedState(state: stateForWhite, degree: value)));
       }
     }
   }
 
-  Widget buildButtonsWhite(Set<LedState> ledStates, BuildContext context) {
+  Widget buildButtonsWhite(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(children: [
@@ -271,7 +273,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
               ),
             ),
             child: Slider(
-              value: value?.toDouble() ?? 50,
+              value: value.toDouble(),
               max: 99,
               divisions: 99,
               label: '$value',
@@ -326,7 +328,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
         ]));
   }
 
-  Widget buildScenarioButtons(Set<LedState> ledStates) {
+  Widget buildScenarioButtons() {
     return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(children: [
@@ -361,13 +363,13 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
               height: MediaQuery.of(context).size.height / 30),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: buildButtonRowDependentOnLedState(ledStates).toList(),
+            children: buildButtonRowDependentOnLedState().toList(),
           ),
           const Divider(color: Colors.transparent),
         ]));
   }
 
-  List<Widget> buildButtonRowDependentOnLedState(Set<LedState> ledStates) {
+  List<Widget> buildButtonRowDependentOnLedState() {
     return <Widget>[
       buildButton(
           context: context,
@@ -410,25 +412,26 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
   }
 
   Widget buildButton(
-      {BuildContext context,
-      States state,
-      int degree,
-      int countButtonInRow,
-      Color leftGradienColor,
-      Color rightGradienColor,
-      String buttonName,
-      Color buttonTextColor}) {
+      {required BuildContext context,
+      required States state,
+      required int degree,
+      required int countButtonInRow,
+      required Color leftGradienColor,
+      required Color rightGradienColor,
+      required String buttonName,
+      required Color buttonTextColor}) {
     return GestureDetector(
       onTap: () {
         isGradualState(state);
         if (ledStateEnum == LedStateEnum.independent) {
           BlocProvider.of<BlDevicesBlocBloc>(context).add(
-              BlDevicesBlocEventUpdateIndependent(LedState(
-                  name: ledState.ledName, state: state, degree: degree)));
+              BlDevicesBlocEventUpdateIndependent(
+                  ledState: LedState(
+                      name: ledState.ledName, state: state, degree: degree)));
         } else if (ledStateEnum == LedStateEnum.group) {
           BlocProvider.of<BlDevicesBlocBloc>(context).add(
               BlDevicesBlocEventUpdateGroup(
-                  LedState(state: state, degree: degree)));
+                  ledState: LedState(state: state, degree: degree)));
         }
       },
       child: Container(
@@ -454,12 +457,12 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
   }
 
   Widget buildScenarioButton(
-      {BuildContext context,
-      int countButtonInRow,
-      Color leftGradienColor,
-      Color rightGradienColor,
-      String buttonName,
-      Color buttonTextColor}) {
+      {required BuildContext context,
+      required int countButtonInRow,
+      required Color leftGradienColor,
+      required Color rightGradienColor,
+      required String buttonName,
+      required Color buttonTextColor}) {
     return GestureDetector(
       onTap: () => BlocProvider.of<AppStateBlocBloc>(context)
           .add(AppStateBlocEventScenario()),
@@ -515,15 +518,17 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
                           setState(() {
                             ledState.setDeactivateInIndependent();
                             BlocProvider.of<BlDevicesBlocBloc>(context).add(
-                                BlDevicesBlocEventUpdateIndependent(LedState(
-                                    name: ledState.name,
-                                    active: ledState.activeInIndependent)));
+                                BlDevicesBlocEventUpdateIndependent(
+                                    ledState: LedState(
+                                        name: ledState.name,
+                                        active: ledState.activeInIndependent)));
                             ledState = ledStates.elementAt(index);
                             ledState.setActiveInIndependent();
                             BlocProvider.of<BlDevicesBlocBloc>(context).add(
-                                BlDevicesBlocEventUpdateIndependent(LedState(
-                                    name: ledState.name,
-                                    active: ledState.activeInIndependent)));
+                                BlDevicesBlocEventUpdateIndependent(
+                                    ledState: LedState(
+                                        name: ledState.name,
+                                        active: ledState.activeInIndependent)));
                             titleName =
                                 'Control Panel. \n Selescted led: ${ledState.ledName}';
                           });
@@ -569,12 +574,13 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
             onPressed: () {
               if (ledStateEnum == LedStateEnum.independent) {
                 BlocProvider.of<BlDevicesBlocBloc>(context).add(
-                    BlDevicesBlocEventUpdateIndependent(LedState(
-                        name: ledState.ledName, state: States.disable)));
+                    BlDevicesBlocEventUpdateIndependent(
+                        ledState: LedState(
+                            name: ledState.ledName, state: States.disable)));
               } else if (ledStateEnum == LedStateEnum.group) {
                 BlocProvider.of<BlDevicesBlocBloc>(context).add(
                     BlDevicesBlocEventUpdateGroup(
-                        LedState(state: States.disable)));
+                        ledState: LedState(state: States.disable)));
               }
             },
             label: const Text('Disable')),

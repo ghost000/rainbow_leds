@@ -4,7 +4,7 @@ import 'package:rainbow_leds/screens/control_panel_screen_interface.dart';
 
 class ControlPanelIndependentAndGroupScreen
     extends ControlPanelScreenInterface {
-  const ControlPanelIndependentAndGroupScreen({Key key}) : super(key: key);
+  const ControlPanelIndependentAndGroupScreen({Key? key}) : super(key: key);
   @override
   _ControlPanelIndependentAndGroupScreenState createState() =>
       _ControlPanelIndependentAndGroupScreenState();
