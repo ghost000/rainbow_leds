@@ -29,6 +29,7 @@ dependencies:
   equatable: ^2.0.3
   flutter_circle_color_picker: ^0.3.0
   #reflectable: any
+  #google_fonts: ^2.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

@@ -8,6 +8,8 @@ import 'screens/control_panel_independent_and_group_screen.dart';
 import 'screens/control_panel_independent_screen.dart';
 import 'screens/find_devices_screen.dart';
 import 'screens/scenario_screen.dart';
+import 'package:flutter/services.dart';
+//import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   BlocOverrides.runZoned(
@@ -36,17 +38,27 @@ class RainbowLedsApp extends StatefulWidget {
 class _RainbowLedsApp extends State<RainbowLedsApp> {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     return MaterialApp(
       title: 'just light',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        brightness: Brightness.light,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-      ),
-      themeMode: ThemeMode.dark,
+          brightness: Brightness.light,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          bottomAppBarColor: Colors.transparent,
+          // textTheme: GoogleFonts.robotoTextTheme(
+          //   Theme.of(context).textTheme,
+          // ),
+          appBarTheme: AppBarTheme(
+            titleTextStyle: TextStyle(
+              color: Colors.orange,
+              fontSize: 30,
+              //fontStyle: GoogleFonts.s,
+              //fontFamily: 'RaleWay'
+            ),
+            color: Colors.transparent,
+          ),
+          scaffoldBackgroundColor: Colors.green),
       routes: {
         '/': (context) => FindDevicesScreen(),
         '/BluetoothOffScreen': (context) =>

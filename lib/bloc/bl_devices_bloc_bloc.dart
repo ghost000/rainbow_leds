@@ -90,6 +90,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
                   .isEmpty) {
             var tempLedState = LedState(
                 name: scanResult.device.id.id,
+                secondName: scanResult.device.name,
                 active: false,
                 color: const Color(0xFF000000),
                 degree: 0,

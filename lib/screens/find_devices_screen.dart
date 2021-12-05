@@ -113,14 +113,15 @@ Widget buildScanResultsColumn(Set<LedState>? scanResults,
 
 Widget buildTextAndButtons(
     LedState scanResult, LedStateEnum ledStateEnum, BuildContext context) {
-  final name = scanResult.name.toString();
   return Column(children: <Widget>[
     Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Align(
           alignment: FractionalOffset.topLeft,
-          child: Text(name),
+          child: Text(scanResult.secondName.toString() +
+              " : " +
+              scanResult.name.toString()),
         )
       ],
     ),

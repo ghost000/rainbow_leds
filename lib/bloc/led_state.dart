@@ -27,6 +27,7 @@ enum States {
 
 class LedState {
   String name = "";
+  String secondName = "";
   Color color = const Color(0xFF000000);
   States state = States.empty;
   LightManager lightManager = LightManager();
@@ -35,11 +36,13 @@ class LedState {
 
   LedState(
       {String name = "",
+      String secondName = "",
       Color color = const Color(0xFF000000),
       States state = States.empty,
       int degree = 0,
       bool active = false})
       : name = name,
+        secondName = secondName,
         color = color,
         degree = degree,
         state = state,
