@@ -6,7 +6,7 @@ class StepScenario {
   Color color = const Color(0xFF000000);
   States state = States.empty;
   int degree = 0;
-  Duration duration = Duration();
+  Duration duration = Duration.zero;
   bool activeInIndependent = false;
 
   StepScenario(

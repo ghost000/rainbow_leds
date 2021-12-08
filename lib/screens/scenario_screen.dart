@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:rainbow_leds/bloc/blocs.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rainbow_leds/screens/bluetooth_off_screen.dart';
+import 'package:flutter_blue/flutter_blue.dart';
+
+import '../bloc/blocs.dart';
+import 'bluetooth_off_screen.dart';
 
 class ScenarioSetterScreen extends StatefulWidget {
   const ScenarioSetterScreen({Key? key}) : super(key: key);
@@ -62,6 +63,6 @@ class ScenarioSetterScreenState extends State<ScenarioSetterScreen> {
 }
 
 List<Step> buildSteps(BuildContext context) {
-  List<Step> test = <Step>[];
+  final test = <Step>[];
   return test;
 }

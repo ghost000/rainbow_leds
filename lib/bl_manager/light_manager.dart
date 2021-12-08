@@ -31,7 +31,7 @@ class LightManager {
   //LightManager(){}
 
   LightManager() {
-    this.statesToFonctionMap = {
+    statesToFonctionMap = {
       //States.scan              : (  ){ light.scan();  },
       States.rgb: ({required Color color}) {
         sendPacket(0xa1, color);
@@ -71,14 +71,10 @@ class LightManager {
 
   @override
   String toString() {
-    return 'LightManager BluetoothCharacteristic: $blCharacteristic, BluetoothDevice: $blDevice.';
+    return 'LM BlCharacteristic: $blCharacteristic, BlDevice: $blDevice.';
   }
 
   BluetoothCharacteristic? get characteristic => blCharacteristic;
-
-  set characteristic(BluetoothCharacteristic? characteristic) {
-    characteristic = characteristic;
-  }
 
   BluetoothDevice? get bluetoothDevice => blDevice;
 
@@ -196,8 +192,7 @@ class LightManager {
     await blDevice!.connect();
   }
 
-  Future<void> changeStateAndUpdate(
-      States newState, Color color, int degree) async {
+  Future<void> changeStateAndUpdate(States newState, Color color, int degree) async {
     clearIsolateIfNeeded();
 
     if (checkNewStateForGradualStates(newState)) {
@@ -220,7 +215,7 @@ class LightManager {
   }
 
   static Future<void> flareFakeUpdate(SendPort sendPort) async {
-    Timer.periodic(const Duration(milliseconds: 30), (Timer t) {
+    Timer.periodic(const Duration(milliseconds: 30), (t) {
       sendPort.send('0');
     });
   }

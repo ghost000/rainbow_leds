@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:bloc/bloc.dart' show Bloc;
 import 'package:equatable/equatable.dart';
+import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 
 import '../../../scenario/scenario_interface.dart';
 

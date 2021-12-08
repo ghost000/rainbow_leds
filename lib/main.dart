@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/blocs.dart';
@@ -8,7 +9,6 @@ import 'screens/control_panel_independent_and_group_screen.dart';
 import 'screens/control_panel_independent_screen.dart';
 import 'screens/find_devices_screen.dart';
 import 'screens/scenario_screen.dart';
-import 'package:flutter/services.dart';
 //import 'package:google_fonts/google_fonts.dart';
 
 void main() {
@@ -17,13 +17,13 @@ void main() {
       MultiBlocProvider(
         providers: [
           BlocProvider<BlDevicesBlocBloc>(
-            create: (BuildContext context) => BlDevicesBlocBloc(),
+            create: (context) => BlDevicesBlocBloc(),
           ),
           BlocProvider<AppStateBlocBloc>(
-            create: (BuildContext context) => AppStateBlocBloc(),
+            create: (context) => AppStateBlocBloc(),
           ),
         ],
-        child: RainbowLedsApp(),
+        child: const RainbowLedsApp(),
       ),
     ),
     blocObserver: SimpleBlocObserver(),
@@ -31,6 +31,8 @@ void main() {
 }
 
 class RainbowLedsApp extends StatefulWidget {
+  const RainbowLedsApp({Key? key}) : super(key: key);
+
   @override
   _RainbowLedsApp createState() => _RainbowLedsApp();
 }
@@ -49,7 +51,7 @@ class _RainbowLedsApp extends State<RainbowLedsApp> {
           // textTheme: GoogleFonts.robotoTextTheme(
           //   Theme.of(context).textTheme,
           // ),
-          appBarTheme: AppBarTheme(
+          appBarTheme: const AppBarTheme(
             titleTextStyle: TextStyle(
               color: Colors.orange,
               fontSize: 30,
@@ -60,15 +62,15 @@ class _RainbowLedsApp extends State<RainbowLedsApp> {
           ),
           scaffoldBackgroundColor: Colors.green),
       routes: {
-        '/': (context) => FindDevicesScreen(),
-        '/BluetoothOffScreen': (context) =>
-            BluetoothOffScreen(key: null, state: null),
+        '/': (context) => const FindDevicesScreen(),
+        '/BluetoothOffScreen': (context) => const BluetoothOffScreen(),
         '/ControlPanelIndependentAndGroupScreen': (context) =>
-            ControlPanelIndependentAndGroupScreen(),
+            const ControlPanelIndependentAndGroupScreen(),
         '/ControlPanelIndependentScreen': (context) =>
-            ControlPanelIndependentScreen(),
-        '/ControlPanelGroupScreen': (context) => ControlPanelGroupScreen(),
-        '/ScenarioSetterScreen': (context) => ScenarioSetterScreen(),
+            const ControlPanelIndependentScreen(),
+        '/ControlPanelGroupScreen': (context) =>
+            const ControlPanelGroupScreen(),
+        '/ScenarioSetterScreen': (context) => const ScenarioSetterScreen(),
       },
       initialRoute: '/',
     );

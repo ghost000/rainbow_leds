@@ -2,8 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:logger/logger.dart';
+import 'package:logger/logger.dart' show Logger;
+import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 
 import 'led_state.dart';
 
@@ -88,13 +88,9 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
               notAssignedLedsStates
                   .where((element) => element.name == scanResult.device.id.id)
                   .isEmpty) {
-            var tempLedState = LedState(
+            final tempLedState = LedState(
                 name: scanResult.device.id.id,
-                secondName: scanResult.device.name,
-                active: false,
-                color: const Color(0xFF000000),
-                degree: 0,
-                state: States.empty);
+                secondName: scanResult.device.name);
             tempLedState.ledBluetoothDevice = scanResult.device;
             add(BlDevicesBlocEventAddToNotAssigned(ledState: tempLedState));
           }
@@ -208,7 +204,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       _independentLedsStates.add(independentLedsStates);
       _groupLedsStates.add(groupLedsStates);
       return emit(BlDevicesBlocStateLoadGroup(groupLedsStates.toList()));
-    } catch (_) {
+    } on Exception catch (_) {
       return emit(BlDevicesBlocStateLoadFailure());
     }
   }
@@ -220,7 +216,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       groupLedsStates.remove(event.ledState);
       _groupLedsStates.add(groupLedsStates);
       return emit(BlDevicesBlocStateLoadGroup(groupLedsStates.toList()));
-    } catch (_) {
+    } on Exception catch (_) {
       return emit(BlDevicesBlocStateLoadFailure());
     }
   }
@@ -237,7 +233,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       _groupLedsStates.add(groupLedsStates);
       return emit(
           BlDevicesBlocStateLoadIndependent(independentLedsStates.toList()));
-    } catch (_) {
+    } on Exception catch (_) {
       return emit(BlDevicesBlocStateLoadFailure());
     }
   }
@@ -250,7 +246,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       _independentLedsStates.add(independentLedsStates);
       return emit(
           BlDevicesBlocStateLoadIndependent(independentLedsStates.toList()));
-    } catch (_) {
+    } on Exception catch (_) {
       return emit(BlDevicesBlocStateLoadFailure());
     }
   }
@@ -259,7 +255,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       BlDevicesBlocEventAddToNotAssigned event,
       Emitter<BlDevicesBlocState> emit) {
     try {
-      var logger = Logger();
+      final logger = Logger();
 
       logger.d(event);
       logger.e(event.ledState);
@@ -271,7 +267,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       _groupLedsStates.add(groupLedsStates);
       return emit(
           BlDevicesBlocStateLoadNotAssigned(notAssignedLedsStates.toList()));
-    } catch (_) {
+    } on Exception catch (_) {
       return emit(BlDevicesBlocStateLoadFailure());
     }
   }
@@ -284,7 +280,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       _notAssignedLedsStates.add(notAssignedLedsStates);
       return emit(
           BlDevicesBlocStateLoadNotAssigned(notAssignedLedsStates.toList()));
-    } catch (_) {
+    } on Exception catch (_) {
       return emit(BlDevicesBlocStateLoadFailure());
     }
   }
@@ -301,7 +297,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       _independentLedsStates.add(independentLedsStates);
       return emit(
           BlDevicesBlocStateUpdateIndependent(independentLedsStates.toList()));
-    } catch (_) {
+    } on Exception catch (_) {
       return emit(BlDevicesBlocStateLoadFailure());
     }
   }
@@ -314,7 +310,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       }
       _groupLedsStates.add(groupLedsStates);
       return emit(BlDevicesBlocStateUpdateGroup(groupLedsStates.toList()));
-    } catch (_) {
+    } on Exception catch (_) {
       return emit(BlDevicesBlocStateLoadFailure());
     }
   }
@@ -352,7 +348,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       } else if (event.groupOrIndependent == GroupOrIndependent.independent) {
         return emit(BlDevicesBlocStateConnect(independentLedsStates.toList()));
       }
-    } catch (_) {
+    } on Exception catch (_) {
       return emit(BlDevicesBlocStateLoadFailure());
     }
   }
@@ -376,7 +372,7 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
         return emit(
             BlDevicesBlocStateDisconnect(independentLedsStates.toList()));
       }
-    } catch (_) {
+    } on Exception catch (_) {
       return emit(BlDevicesBlocStateLoadFailure());
     }
   }
@@ -388,8 +384,8 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
       ledState.activeInIndependent = eventLedState.activeInIndependent;
       update = false;
     }
-    if (eventLedState.characteristic != ledState.characteristic) {
-      ledState.ledCharacteristic = eventLedState.characteristic;
+    if (eventLedState.ledCharacteristic != ledState.ledCharacteristic) {
+      ledState.ledCharacteristic = eventLedState.ledCharacteristic;
     }
     if (eventLedState.color != const Color(0xFFFFFFFF) &&
         eventLedState.color != ledState.color) {

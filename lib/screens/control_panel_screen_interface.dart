@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:rainbow_leds/bloc/blocs.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rainbow_leds/screens/bluetooth_off_screen.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_circle_color_picker/flutter_circle_color_picker.dart';
+
+import '../bloc/blocs.dart';
+import 'bluetooth_off_screen.dart';
 
 class ControlPanelScreenInterface extends StatefulWidget {
   const ControlPanelScreenInterface({Key? key}) : super(key: key);
@@ -100,7 +101,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
           ? selectedIndexIndependent
           : selectedIndexGroup,
       selectedItemColor: Colors.amber[800],
-      onTap: (int index) {
+      onTap: (index) {
         setState(() {
           ledStateEnum == LedStateEnum.independent
               ? selectedIndexIndependent = index
@@ -501,7 +502,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
       onTap: () {
         showDialog(
           context: context,
-          builder: (BuildContext context) {
+          builder: (context) {
             return SimpleDialog(
               title: const Text('Select Led'),
               children: [
@@ -511,7 +512,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
                   child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: ledStates.length,
-                    itemBuilder: (BuildContext context, int index) {
+                    itemBuilder: (context, index) {
                       return ListTile(
                         title: Text(ledStates.elementAt(index).ledName),
                         onTap: () {

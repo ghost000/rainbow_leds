@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:rainbow_leds/bloc/blocs.dart';
+import 'package:rxdart/rxdart.dart' show Rx;
+import 'blocs.dart';
 
 enum LedStateStream { both, independent, group, empty }
 
 class DoubleStreamBuilder extends StatelessWidget {
   @override
   const DoubleStreamBuilder(
-      {required this.streamIndependent,
+      {Key? key,
+      required this.streamIndependent,
       required this.streamGroup,
-      required this.builder});
+      required this.builder})
+      : super(key: key);
 
   final Stream<Set<LedState>> streamIndependent;
   final Stream<Set<LedState>> streamGroup;
@@ -30,6 +32,6 @@ class DoubleStreamBuilder extends StatelessWidget {
         }
         return LedStateStream.empty;
       }),
-      builder: (BuildContext context, AsyncSnapshot<LedStateStream> snapshot) =>
+      builder: (context, AsyncSnapshot<LedStateStream> snapshot) =>
           builder(context, snapshot.data));
 }

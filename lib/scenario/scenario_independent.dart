@@ -1,11 +1,12 @@
 part of 'scenario_interface.dart';
 
 class ScenarioIndependent implements ScenarioInterface {
-  Map scenarioMap = Map<String, Map<int, StepScenario>>();
+  @override
+  Map scenarioMap = <String, Map<int, StepScenario>>{};
 
   @override
   void addScenario(String scenarioName) {
-    scenarioMap[scenarioName] = Map<int, StepScenario>();
+    scenarioMap[scenarioName] = <int, StepScenario>{};
   }
 
   void addStep(String scenarioName, String ledName, Color color, States state,
@@ -22,6 +23,7 @@ class ScenarioIndependent implements ScenarioInterface {
     };
   }
 
+  @override
   void removeScenario(String scenarioName) {
     scenarioMap.remove(scenarioName);
   }

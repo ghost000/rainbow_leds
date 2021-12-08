@@ -40,13 +40,14 @@ class LedState {
       Color color = const Color(0xFF000000),
       States state = States.empty,
       int degree = 0,
-      bool active = false})
-      : name = name,
-        secondName = secondName,
-        color = color,
-        degree = degree,
-        state = state,
-        activeInIndependent = active {}
+      bool active = false}) {
+    name = name;
+    secondName = secondName;
+    color = color;
+    degree = degree;
+    state = state;
+    activeInIndependent = active;
+  }
 
   @override
   bool operator ==(dynamic other) =>
@@ -57,7 +58,8 @@ class LedState {
 
   Color get ledColor => color;
   String get ledName => name;
-  BluetoothCharacteristic? get characteristic => lightManager.blCharacteristic;
+  BluetoothCharacteristic? get ledCharacteristic =>
+      lightManager.blCharacteristic;
   States get ledState => state;
   BluetoothDevice? get ledBluetoothDevice => lightManager.bluetoothDevice;
   int get ledDegree => degree;
@@ -69,7 +71,7 @@ class LedState {
   set ledState(States newState) => state = newState;
 
   set ledCharacteristic(BluetoothCharacteristic? characteristic) {
-    lightManager.characteristic = characteristic;
+    lightManager.blCharacteristic = characteristic;
   }
 
   set ledBluetoothDevice(BluetoothDevice? bluetoothDevice) {

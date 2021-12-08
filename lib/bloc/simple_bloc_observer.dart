@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:bloc/bloc.dart' show Bloc, BlocBase, BlocObserver, Transition;
 
 class SimpleBlocObserver extends BlocObserver {
   @override

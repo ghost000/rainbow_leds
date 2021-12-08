@@ -1,11 +1,12 @@
 part of 'scenario_interface.dart';
 
 class ScenarioDifferentGroup implements ScenarioInterface {
-  Map scenarioMap = Map<String, Map<String, Map<int, StepScenario>>>();
+  @override
+  Map scenarioMap = <String, Map<String, Map<int, StepScenario>>>{};
 
   @override
   void addScenario(String scenarioName) {
-    scenarioMap[scenarioName] = Map<String, Map<int, StepScenario>>();
+    scenarioMap[scenarioName] = <String, Map<int, StepScenario>>{};
   }
 
   void addStep(String scenarioName, String ledName, Color color, States state,
@@ -20,6 +21,7 @@ class ScenarioDifferentGroup implements ScenarioInterface {
     };
   }
 
+  @override
   void removeScenario(String scenarioName) {
     scenarioMap.remove(scenarioName);
   }

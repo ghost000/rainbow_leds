@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:rainbow_leds/bloc/blocs.dart';
-import 'package:rainbow_leds/screens/control_panel_screen_interface.dart';
+
+import '../bloc/blocs.dart';
+import 'control_panel_screen_interface.dart';
 
 class ControlPanelIndependentAndGroupScreen
     extends ControlPanelScreenInterface {

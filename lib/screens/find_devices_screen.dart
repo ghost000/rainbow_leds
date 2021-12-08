@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_blue/flutter_blue.dart';
+
 import '../bloc/blocs.dart';
 import '../bloc/multiple_stream_builder.dart';
 import 'bluetooth_off_screen.dart';
 
 class FindDevicesScreen extends StatelessWidget {
+  const FindDevicesScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<AppStateBlocBloc, AppStateBlocState>(
@@ -119,9 +122,7 @@ Widget buildTextAndButtons(
       children: <Widget>[
         Align(
           alignment: FractionalOffset.topLeft,
-          child: Text(scanResult.secondName.toString() +
-              " : " +
-              scanResult.name.toString()),
+          child: Text("${scanResult.secondName} : ${scanResult.name}"),
         )
       ],
     ),
@@ -175,9 +176,9 @@ Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
       onPressed: () {
         scanResult.setDeactivateInIndependent();
 
-        var tmpLedState = LedState(
+        final tmpLedState = LedState(
             name: scanResult.name, active: scanResult.activeInIndependent);
-        tmpLedState.ledCharacteristic = scanResult.characteristic;
+        tmpLedState.ledCharacteristic = scanResult.ledCharacteristic;
         tmpLedState.ledBluetoothDevice = scanResult.ledBluetoothDevice;
 
         BlocProvider.of<BlDevicesBlocBloc>(context)
@@ -195,9 +196,9 @@ Widget buildGroupFlatButton(LedState scanResult, BuildContext context) {
       onPressed: () {
         scanResult.setDeactivateInIndependent();
 
-        var tmpLedState = LedState(
+        final tmpLedState = LedState(
             name: scanResult.name, active: scanResult.activeInIndependent);
-        tmpLedState.ledCharacteristic = scanResult.characteristic;
+        tmpLedState.ledCharacteristic = scanResult.ledCharacteristic;
         tmpLedState.ledBluetoothDevice = scanResult.ledBluetoothDevice;
 
         BlocProvider.of<BlDevicesBlocBloc>(context)
@@ -215,9 +216,9 @@ Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
       onPressed: () {
         scanResult.setDeactivateInIndependent();
 
-        var tmpLedState = LedState(
+        final tmpLedState = LedState(
             name: scanResult.name, active: scanResult.activeInIndependent);
-        tmpLedState.ledCharacteristic = scanResult.characteristic;
+        tmpLedState.ledCharacteristic = scanResult.ledCharacteristic;
         tmpLedState.ledBluetoothDevice = scanResult.ledBluetoothDevice;
 
         BlocProvider.of<BlDevicesBlocBloc>(context)
