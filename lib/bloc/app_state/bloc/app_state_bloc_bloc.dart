@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:bloc/bloc.dart' show Bloc;
 import 'package:equatable/equatable.dart';
 
 part 'app_state_bloc_event.dart';

@@ -16,7 +16,7 @@ class BlDevicesBlocStateScan extends BlDevicesBlocState {}
 class BlDevicesBlocStateGroup extends BlDevicesBlocState {
   final List<LedState> ledStates;
 
-  const BlDevicesBlocStateGroup([this.ledStates = const []]);
+  const BlDevicesBlocStateGroup(this.ledStates);
 
   @override
   List<Object> get props => [ledStates];
@@ -28,7 +28,7 @@ class BlDevicesBlocStateGroup extends BlDevicesBlocState {
 class BlDevicesBlocStateIndependent extends BlDevicesBlocState {
   final List<LedState> ledStates;
 
-  const BlDevicesBlocStateIndependent([this.ledStates = const []]);
+  const BlDevicesBlocStateIndependent(this.ledStates);
 
   @override
   List<Object> get props => [ledStates];
@@ -44,9 +44,9 @@ class BlDevicesBlocStateAll extends BlDevicesBlocState {
   final List<LedState> notAssignedLedsStates;
 
   const BlDevicesBlocStateAll(
-      [this.groupLedsStates = const [],
-      this.independentLedsStates = const [],
-      this.notAssignedLedsStates = const []]);
+      this.groupLedsStates,
+      this.independentLedsStates,
+      this.notAssignedLedsStates);
 
   @override
   List<Object> get props =>
@@ -60,7 +60,7 @@ class BlDevicesBlocStateAll extends BlDevicesBlocState {
 class BlDevicesBlocStateLoadIndependent extends BlDevicesBlocState {
   final List<LedState> ledStates;
 
-  const BlDevicesBlocStateLoadIndependent([this.ledStates = const []]);
+  const BlDevicesBlocStateLoadIndependent(this.ledStates);
 
   @override
   List<Object> get props => [ledStates];
@@ -73,7 +73,7 @@ class BlDevicesBlocStateLoadIndependent extends BlDevicesBlocState {
 class BlDevicesBlocStateLoadGroup extends BlDevicesBlocState {
   final List<LedState> ledStates;
 
-  const BlDevicesBlocStateLoadGroup([this.ledStates = const []]);
+  const BlDevicesBlocStateLoadGroup(this.ledStates);
 
   @override
   List<Object> get props => [ledStates];
@@ -85,7 +85,7 @@ class BlDevicesBlocStateLoadGroup extends BlDevicesBlocState {
 class BlDevicesBlocStateLoadNotAssigned extends BlDevicesBlocState {
   final List<LedState> ledStates;
 
-  const BlDevicesBlocStateLoadNotAssigned([this.ledStates = const []]);
+  const BlDevicesBlocStateLoadNotAssigned(this.ledStates);
 
   @override
   List<Object> get props => [ledStates];
@@ -98,7 +98,7 @@ class BlDevicesBlocStateLoadNotAssigned extends BlDevicesBlocState {
 class BlDevicesBlocStateUpdateIndependent extends BlDevicesBlocState {
   final List<LedState> ledStates;
 
-  const BlDevicesBlocStateUpdateIndependent([this.ledStates = const []]);
+  const BlDevicesBlocStateUpdateIndependent(this.ledStates);
 
   @override
   List<Object> get props => [ledStates];
@@ -111,7 +111,7 @@ class BlDevicesBlocStateUpdateIndependent extends BlDevicesBlocState {
 class BlDevicesBlocStateUpdateGroup extends BlDevicesBlocState {
   final List<LedState> ledStates;
 
-  const BlDevicesBlocStateUpdateGroup([this.ledStates = const []]);
+  const BlDevicesBlocStateUpdateGroup(this.ledStates);
 
   @override
   List<Object> get props => [ledStates];
@@ -129,7 +129,7 @@ class BlDevicesBlocStateLoadFailure extends BlDevicesBlocState {
 class BlDevicesBlocStateConnect extends BlDevicesBlocState {
   final List<LedState> ledStates;
 
-  const BlDevicesBlocStateConnect([this.ledStates = const []]);
+  const BlDevicesBlocStateConnect(this.ledStates);
 
   @override
   List<Object> get props => [ledStates];
@@ -141,7 +141,7 @@ class BlDevicesBlocStateConnect extends BlDevicesBlocState {
 class BlDevicesBlocStateDisconnect extends BlDevicesBlocState {
   final List<LedState> ledStates;
 
-  const BlDevicesBlocStateDisconnect([this.ledStates = const []]);
+  const BlDevicesBlocStateDisconnect(this.ledStates);
 
   @override
   List<Object> get props => [ledStates];

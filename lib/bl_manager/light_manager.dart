@@ -28,8 +28,6 @@ class LightManager {
   int colorRGBFlafe = 0;
   late Isolate isolate;
 
-  //LightManager(){}
-
   LightManager() {
     statesToFonctionMap = {
       //States.scan              : (  ){ light.scan();  },

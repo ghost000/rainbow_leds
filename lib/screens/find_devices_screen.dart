@@ -38,7 +38,6 @@ class FindDevicesScreen extends StatelessWidget {
                 child: Scaffold(
                     appBar: NeumorphicAppBar(
                       centerTitle: true,
-                      //title: const Text('Find devices'),
                       title: NeumorphicText(
                         "Find devices",
                         style: NeumorphicStyle(
@@ -186,7 +185,7 @@ Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
         scanResult.setDeactivateInIndependent();
 
         final tmpLedState = LedState(
-            name: scanResult.name, active: scanResult.activeInIndependent);
+            name: scanResult.name, secondName: scanResult.secondName, active: scanResult.activeInIndependent);
         tmpLedState.ledCharacteristic = scanResult.ledCharacteristic;
         tmpLedState.ledBluetoothDevice = scanResult.ledBluetoothDevice;
 
@@ -206,7 +205,7 @@ Widget buildGroupFlatButton(LedState scanResult, BuildContext context) {
         scanResult.setDeactivateInIndependent();
 
         final tmpLedState = LedState(
-            name: scanResult.name, active: scanResult.activeInIndependent);
+            name: scanResult.name, secondName: scanResult.secondName, active: scanResult.activeInIndependent);
         tmpLedState.ledCharacteristic = scanResult.ledCharacteristic;
         tmpLedState.ledBluetoothDevice = scanResult.ledBluetoothDevice;
 
@@ -226,7 +225,7 @@ Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
         scanResult.setDeactivateInIndependent();
 
         final tmpLedState = LedState(
-            name: scanResult.name, active: scanResult.activeInIndependent);
+            name: scanResult.name, secondName: scanResult.secondName, active: scanResult.activeInIndependent);
         tmpLedState.ledCharacteristic = scanResult.ledCharacteristic;
         tmpLedState.ledBluetoothDevice = scanResult.ledBluetoothDevice;
 
@@ -326,8 +325,7 @@ Widget buildFloatingButtonFromDoubleStreams(
         color: Colors.white,
       ),
     );
-  }
-  ;
+  };
 
   return NeumorphicButton(
       onPressed: () async {

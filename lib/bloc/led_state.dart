@@ -40,13 +40,15 @@ class LedState {
       Color color = const Color(0xFF000000),
       States state = States.empty,
       int degree = 0,
-      bool active = false}) {
-    name = name;
-    secondName = secondName;
-    color = color;
-    degree = degree;
-    state = state;
-    activeInIndependent = active;
+      bool active = false,
+        BluetoothDevice? bluetoothDevice = null}) {
+    this.name = name;
+    this.secondName = secondName;
+    this.color = color;
+    this.degree = degree;
+    this.state = state;
+    this.activeInIndependent = active;
+    lightManager.bluetoothDevice = bluetoothDevice;
   }
 
   @override
