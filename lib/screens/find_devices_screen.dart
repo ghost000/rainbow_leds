@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
@@ -37,21 +36,27 @@ class FindDevicesScreen extends StatelessWidget {
                 padding:
                     EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                 child: Scaffold(
-                    appBar: AppBar(
-                      title: const Text('Find devices'),
-                    ),
-                    body: buildRefreshIndicator(context),
-                    bottomNavigationBar: BottomAppBar(
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      shape: const CircularNotchedRectangle(),
-                      child: Container(
-                        height: 50.0,
+                    appBar: NeumorphicAppBar(
+                      centerTitle: true,
+                      //title: const Text('Find devices'),
+                      title: NeumorphicText(
+                        "Find devices",
+                        style: NeumorphicStyle(
+                          shadowLightColor: Colors.green,
+                          depth: 5,
+                          color: Colors.white,
+                            border: const NeumorphicBorder.none(),
+                        ),
+                        textStyle: NeumorphicTextStyle(
+                          fontSize: 30,
+                        ),
                       ),
                     ),
+                    body: buildRefreshIndicator(context),
                     floatingActionButton:
                         buildFloatingActionButtonFromDuobleStreams(context),
                     floatingActionButtonLocation:
-                        FloatingActionButtonLocation.centerDocked),
+                        FloatingActionButtonLocation.centerFloat),
               );
             }));
   }
@@ -66,9 +71,10 @@ Widget buildRefreshIndicator(BuildContext context) {
             parent: AlwaysScrollableScrollPhysics()),
         children: <Widget>[
           const Text(
-            'notAssignedLedsStates',
-            textAlign: TextAlign.left,
-          ),
+            'Not assigned',
+            textAlign: TextAlign.start,
+            style: TextStyle(fontSize: 20.0),
+           ),
           StreamBuilder(
               stream: BlocProvider.of<BlDevicesBlocBloc>(context)
                   .notAssignedLedsStatesStream,
@@ -78,8 +84,9 @@ Widget buildRefreshIndicator(BuildContext context) {
                   buildScanResultsColumn(
                       snapshot.data, LedStateEnum.notAssigned, context)),
           const Text(
-            'groupLedsStatesStream',
-            textAlign: TextAlign.left,
+            'Group',
+            textAlign: TextAlign.start,
+            style: TextStyle(fontSize: 20.0),
           ),
           StreamBuilder(
               stream: BlocProvider.of<BlDevicesBlocBloc>(context)
@@ -90,8 +97,9 @@ Widget buildRefreshIndicator(BuildContext context) {
                   buildScanResultsColumn(
                       snapshot.data, LedStateEnum.group, context)),
           const Text(
-            'independentLedsStatesStream',
-            textAlign: TextAlign.left,
+            'Independent',
+            textAlign: TextAlign.start,
+            style: TextStyle(fontSize: 20.0),
           ),
           StreamBuilder(
               stream: BlocProvider.of<BlDevicesBlocBloc>(context)
@@ -108,7 +116,7 @@ Widget buildRefreshIndicator(BuildContext context) {
 Widget buildScanResultsColumn(Set<LedState>? scanResults,
     LedStateEnum ledStateEnum, BuildContext context) {
   return Column(children: <Widget>[
-    const Divider(color: Colors.black),
+    const Divider(color: Colors.white),
     ...scanResults!.map((scanResult) {
       return buildTextAndButtons(scanResult, ledStateEnum, context);
     }).toList(),
@@ -318,32 +326,25 @@ Widget buildFloatingButtonFromDoubleStreams(
         color: Colors.white,
       ),
     );
-  } else if (ledStateStream == LedStateStream.empty) {
-    return FloatingActionButton.extended(
+  }
+  ;
+
+  return NeumorphicButton(
       onPressed: () async {
         await FlutterBlue.instance.startScan(
             scanMode: ScanMode.lowPower, timeout: const Duration(seconds: 4));
       },
-      backgroundColor: Colors.black,
-      label: const Text('Search', style: TextStyle(color: Colors.white)),
-      icon: const Icon(
-        Icons.compare_arrows,
-        size: 35,
-        color: Colors.white,
+      style: NeumorphicStyle(
+        shape: NeumorphicShape.convex,
+        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(100)),
       ),
-    );
-  }
-  return FloatingActionButton.extended(
-    onPressed: () async {
-      await FlutterBlue.instance.startScan(
-          scanMode: ScanMode.lowPower, timeout: const Duration(seconds: 4));
-    },
-    backgroundColor: Colors.black,
-    label: const Text('Search', style: TextStyle(color: Colors.white)),
-    icon: const Icon(
-      Icons.compare_arrows,
-      size: 35,
-      color: Colors.white,
-    ),
-  );
+      tooltip: 'Search',
+      child: Row(children: [
+        const Icon(
+          Icons.compare_arrows,
+          size: 35,
+          color: Colors.white,
+        ),
+        const Text('SEARCH', style: TextStyle(color: Colors.white)),
+      ], mainAxisSize: MainAxisSize.min));
 }
