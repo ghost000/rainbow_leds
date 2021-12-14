@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show AppBar, BuildContext, DefaultTabController, FloatingActionButtonLocation, Icon, Icons, Key, NeverScrollableScrollPhysics, PreferredSize, Scaffold, Size, Tab, TabBar, TabBarView, Text, Widget;
 
-import '../bloc/blocs.dart';
-import 'control_panel_screen_interface.dart';
+import '../bloc/blocs.dart' show LedStateEnum;
+import 'control_panel_screen_interface.dart' show ControlPanelScreenInterface, ControlPanelScreenInterfaceState;
 
 class ControlPanelIndependentAndGroupScreen
     extends ControlPanelScreenInterface {

@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show AppBar, BuildContext, FloatingActionButtonLocation, Key, Scaffold, Text, Widget;
 
-import '../bloc/blocs.dart';
-import 'control_panel_screen_interface.dart';
+import '../bloc/blocs.dart' show LedStateEnum;
+import 'control_panel_screen_interface.dart' show ControlPanelScreenInterface, ControlPanelScreenInterfaceState;
 
 class ControlPanelGroupScreen extends ControlPanelScreenInterface {
   const ControlPanelGroupScreen({Key? key}) : super(key: key);

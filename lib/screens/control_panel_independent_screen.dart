@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show AppBar, BuildContext, FloatingActionButtonLocation, Key, Scaffold, Text, Widget;
 
-import 'control_panel_screen_interface.dart';
+import 'control_panel_screen_interface.dart' show ControlPanelScreenInterface, ControlPanelScreenInterfaceState;
 
 class ControlPanelIndependentScreen extends ControlPanelScreenInterface {
   const ControlPanelIndependentScreen({Key? key}) : super(key: key);

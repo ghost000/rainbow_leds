@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter/material.dart' show BuildContext, Center, Colors, Column, EdgeInsets, Icon, Icons, Key, MainAxisSize, MediaQuery, Padding, Scaffold, StatelessWidget, Text, Theme, Widget;
+import 'package:flutter_blue/flutter_blue.dart' show BluetoothState;
 
 class BluetoothOffScreen extends StatelessWidget {
   const BluetoothOffScreen({Key? key, this.state}) : super(key: key);
