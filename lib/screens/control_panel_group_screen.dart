@@ -5,6 +5,7 @@ import 'control_panel_screen_interface.dart';
 
 class ControlPanelGroupScreen extends ControlPanelScreenInterface {
   const ControlPanelGroupScreen({Key? key}) : super(key: key);
+
   @override
   _ControlPanelGroupScreenState createState() =>
       _ControlPanelGroupScreenState();

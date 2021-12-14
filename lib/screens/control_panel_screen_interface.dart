@@ -8,6 +8,7 @@ import 'bluetooth_off_screen.dart';
 
 class ControlPanelScreenInterface extends StatefulWidget {
   const ControlPanelScreenInterface({Key? key}) : super(key: key);
+
   @override
   ControlPanelScreenInterfaceState createState() =>
       ControlPanelScreenInterfaceState();

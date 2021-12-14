@@ -22,16 +22,19 @@ class ScenarioBloc extends Bloc<ScenarioBlocEvent, ScenarioBlocState> {
 
   final BehaviorSubject<ScenarioIndependent> _scenarioIndependent =
       BehaviorSubject.seeded(ScenarioIndependent());
+
   Stream<ScenarioIndependent> get groupLedsStatesStream =>
       _scenarioIndependent.stream;
 
   final BehaviorSubject<ScenarioTheSameGroup> _scenarioTheSameGroup =
       BehaviorSubject.seeded(ScenarioTheSameGroup());
+
   Stream<ScenarioTheSameGroup> get independentLedsStatesStream =>
       _scenarioTheSameGroup.stream;
 
   final BehaviorSubject<ScenarioDifferentGroup> _scenarioDifferentGroup =
       BehaviorSubject.seeded(ScenarioDifferentGroup());
+
   Stream<ScenarioDifferentGroup> get notAssignedLedsStatesStream =>
       _scenarioDifferentGroup.stream;
 

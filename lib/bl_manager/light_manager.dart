@@ -192,7 +192,8 @@ class LightManager {
     await blDevice!.connect();
   }
 
-  Future<void> changeStateAndUpdate(States newState, Color color, int degree) async {
+  Future<void> changeStateAndUpdate(
+      States newState, Color color, int degree) async {
     clearIsolateIfNeeded();
 
     if (checkNewStateForGradualStates(newState)) {

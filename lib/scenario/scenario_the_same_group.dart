@@ -13,7 +13,8 @@ class ScenarioTheSameGroup implements ScenarioInterface {
       Duration duration, bool activeInIndependent, int stepNumber) {
     scenarioMap[scenarioName] = {
       stepNumber: StepScenario(
-          ledName: "", //[TODO]
+          ledName: "",
+          //[TODO]
           color: color,
           degree: degree,
           duration: duration,
@@ -29,7 +30,8 @@ class ScenarioTheSameGroup implements ScenarioInterface {
   void updateScenario(String scenarioName, Color color, States state,
       int degree, Duration duration, bool activeInIndependent, int stepNumber) {
     scenarioMap[scenarioName][stepNumber] = StepScenario(
-        ledName: "", //[TODO]
+        ledName: "",
+        //[TODO]
         color: color,
         degree: degree,
         duration: duration,

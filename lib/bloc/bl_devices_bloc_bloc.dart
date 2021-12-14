@@ -62,13 +62,16 @@ class BlDevicesBlocBloc extends Bloc<BlDevicesBlocEvent, BlDevicesBlocState> {
 
   final BehaviorSubject<Set<LedState>> _groupLedsStates =
       BehaviorSubject.seeded({});
+
   Stream<Set<LedState>> get groupLedsStatesStream => _groupLedsStates.stream;
   final BehaviorSubject<Set<LedState>> _independentLedsStates =
       BehaviorSubject.seeded({});
+
   Stream<Set<LedState>> get independentLedsStatesStream =>
       _independentLedsStates.stream;
   final BehaviorSubject<Set<LedState>> _notAssignedLedsStates =
       BehaviorSubject.seeded({});
+
   Stream<Set<LedState>> get notAssignedLedsStatesStream =>
       _notAssignedLedsStates.stream;
 

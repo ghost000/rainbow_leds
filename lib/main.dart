@@ -1,5 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+//import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 import 'bloc/blocs.dart';
 import 'screens/bluetooth_off_screen.dart';
@@ -8,9 +10,6 @@ import 'screens/control_panel_independent_and_group_screen.dart';
 import 'screens/control_panel_independent_screen.dart';
 import 'screens/find_devices_screen.dart';
 import 'screens/scenario_screen.dart';
-
-//import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 void main() {
   BlocOverrides.runZoned(

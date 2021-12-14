@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'control_panel_screen_interface.dart';
 
 class ControlPanelIndependentScreen extends ControlPanelScreenInterface {
   const ControlPanelIndependentScreen({Key? key}) : super(key: key);
+
   @override
   _ControlPanelIndependentScreenState createState() =>
       _ControlPanelIndependentScreenState();

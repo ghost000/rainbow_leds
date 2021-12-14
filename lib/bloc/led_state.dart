@@ -57,11 +57,16 @@ class LedState {
   int get hashCode => name.hashCode + color.hashCode;
 
   Color get ledColor => color;
+
   String get ledName => name;
+
   BluetoothCharacteristic? get ledCharacteristic =>
       lightManager.blCharacteristic;
+
   States get ledState => state;
+
   BluetoothDevice? get ledBluetoothDevice => lightManager.bluetoothDevice;
+
   int get ledDegree => degree;
 
   set ledColor(Color newColor) => color = newColor;

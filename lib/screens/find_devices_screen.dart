@@ -45,7 +45,7 @@ class FindDevicesScreen extends StatelessWidget {
                           shadowLightColor: Colors.green,
                           depth: 5,
                           color: Colors.white,
-                            border: const NeumorphicBorder.none(),
+                          border: const NeumorphicBorder.none(),
                         ),
                         textStyle: NeumorphicTextStyle(
                           fontSize: 30,
@@ -74,7 +74,7 @@ Widget buildRefreshIndicator(BuildContext context) {
             'Not assigned',
             textAlign: TextAlign.start,
             style: TextStyle(fontSize: 20.0),
-           ),
+          ),
           StreamBuilder(
               stream: BlocProvider.of<BlDevicesBlocBloc>(context)
                   .notAssignedLedsStatesStream,

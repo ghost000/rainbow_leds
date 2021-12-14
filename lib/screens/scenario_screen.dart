@@ -7,6 +7,7 @@ import 'bluetooth_off_screen.dart';
 
 class ScenarioSetterScreen extends StatefulWidget {
   const ScenarioSetterScreen({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => ScenarioSetterScreenState();
 }
