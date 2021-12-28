@@ -134,10 +134,13 @@ Widget buildTextAndButtons(
         )
       ],
     ),
-    Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: buildButtons(scanResult, ledStateEnum, context),
-    )
+    Container(
+        margin: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: buildButtons(scanResult, ledStateEnum, context),
+        ))
   ]);
 }
 
@@ -179,13 +182,15 @@ final ButtonStyle flatButtonStyle = TextButton.styleFrom(
 Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
   return Align(
     alignment: Alignment.centerRight,
-    child: TextButton(
-      style: flatButtonStyle,
+    child: NeumorphicButton(
+      //style: flatButtonStyle,
       onPressed: () {
         scanResult.setDeactivateInIndependent();
 
         final tmpLedState = LedState(
-            name: scanResult.name, secondName: scanResult.secondName, active: scanResult.activeInIndependent);
+            name: scanResult.name,
+            secondName: scanResult.secondName,
+            active: scanResult.activeInIndependent);
         tmpLedState.ledCharacteristic = scanResult.ledCharacteristic;
         tmpLedState.ledBluetoothDevice = scanResult.ledBluetoothDevice;
 
@@ -200,12 +205,14 @@ Widget buildIndependentFlatButton(LedState scanResult, BuildContext context) {
 Widget buildGroupFlatButton(LedState scanResult, BuildContext context) {
   return Align(
     alignment: FractionalOffset.topRight,
-    child: TextButton(
+    child: NeumorphicButton(
       onPressed: () {
         scanResult.setDeactivateInIndependent();
 
         final tmpLedState = LedState(
-            name: scanResult.name, secondName: scanResult.secondName, active: scanResult.activeInIndependent);
+            name: scanResult.name,
+            secondName: scanResult.secondName,
+            active: scanResult.activeInIndependent);
         tmpLedState.ledCharacteristic = scanResult.ledCharacteristic;
         tmpLedState.ledBluetoothDevice = scanResult.ledBluetoothDevice;
 
@@ -220,12 +227,14 @@ Widget buildGroupFlatButton(LedState scanResult, BuildContext context) {
 Widget buildNotAssignedFlatButton(LedState scanResult, BuildContext context) {
   return Align(
     alignment: FractionalOffset.topRight,
-    child: TextButton(
+    child: NeumorphicButton(
       onPressed: () {
         scanResult.setDeactivateInIndependent();
 
         final tmpLedState = LedState(
-            name: scanResult.name, secondName: scanResult.secondName, active: scanResult.activeInIndependent);
+            name: scanResult.name,
+            secondName: scanResult.secondName,
+            active: scanResult.activeInIndependent);
         tmpLedState.ledCharacteristic = scanResult.ledCharacteristic;
         tmpLedState.ledBluetoothDevice = scanResult.ledBluetoothDevice;
 
@@ -244,32 +253,24 @@ Widget buildConnectDisconnectFlatButton(LedState scanResult,
         stream: scanResult.ledBluetoothDevice!.state,
         initialData: BluetoothDeviceState.disconnected,
         builder: (context, snapshot) {
-          if (snapshot.data == BluetoothDeviceState.disconnected) {
-            return Align(
+          return Align(
               alignment: FractionalOffset.topRight,
-              child: TextButton(
-                onPressed: () {
-                  BlocProvider.of<BlDevicesBlocBloc>(context).add(
-                      BlDevicesBlocEventConnect(
-                          ledState: scanResult,
-                          groupOrIndependent: groupOrIndependent));
-                },
-                child: const Text('Connect'),
-              ),
-            );
-          } else {
-            return Align(
-                alignment: FractionalOffset.topRight,
-                child: ElevatedButton(
-                  onPressed: () {
+              child: NeumorphicSwitch(
+                value: snapshot.data != BluetoothDeviceState.disconnected,
+                onChanged: (value) {
+                  if (value) {
                     BlocProvider.of<BlDevicesBlocBloc>(context).add(
-                        BlDevicesBlocEventDisconnect(
+                        BlDevicesBlocEventConnect(
                             ledState: scanResult,
                             groupOrIndependent: groupOrIndependent));
-                  },
-                  child: const Text('Disconnect'),
-                ));
-          }
+                  } else {
+                    BlocProvider.of<BlDevicesBlocBloc>(context).add(
+                        BlDevicesBlocEventConnect(
+                            ledState: scanResult,
+                            groupOrIndependent: groupOrIndependent));
+                  }
+                },
+              ));
         });
   } else {
     return const Divider(color: Colors.transparent);
@@ -289,42 +290,53 @@ Widget buildFloatingActionButtonFromDuobleStreams(BuildContext context) {
 Widget buildFloatingButtonFromDoubleStreams(
     BuildContext context, LedStateStream? ledStateStream) {
   if (ledStateStream == LedStateStream.both) {
-    return FloatingActionButton.extended(
-      onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
-          .add(AppStateBlocEventControlIndependentAndGroup()),
-      backgroundColor: Colors.black,
-      label: const Text('Independent and group',
-          style: TextStyle(color: Colors.white)),
-      icon: const Icon(
-        Icons.design_services,
-        size: 35,
-        color: Colors.white,
-      ),
-    );
+    return NeumorphicButton(
+        onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
+            .add(AppStateBlocEventControlIndependentAndGroup()),
+        style: NeumorphicStyle(
+          shape: NeumorphicShape.convex,
+          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(100)),
+        ),
+        child: Row(children: [
+          const Icon(
+            Icons.design_services,
+            size: 35,
+            color: Colors.white,
+          ),
+          const Text('Independent and group', style: TextStyle(color: Colors.white)),
+        ], mainAxisSize: MainAxisSize.min));
   } else if (ledStateStream == LedStateStream.independent) {
-    return FloatingActionButton.extended(
-      onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
-          .add(AppStateBlocEventControlIndependent()),
-      backgroundColor: Colors.black,
-      label: const Text('Independent', style: TextStyle(color: Colors.white)),
-      icon: const Icon(
-        Icons.design_services,
-        size: 35,
-        color: Colors.white,
-      ),
-    );
+    return NeumorphicButton(
+        onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
+            .add(AppStateBlocEventControlIndependent()),
+        style: NeumorphicStyle(
+          shape: NeumorphicShape.convex,
+          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(100)),
+        ),
+        child: Row(children: [
+          const Icon(
+            Icons.design_services,
+            size: 35,
+            color: Colors.white,
+          ),
+          const Text('Independent', style: TextStyle(color: Colors.white)),
+        ], mainAxisSize: MainAxisSize.min));
   } else if (ledStateStream == LedStateStream.group) {
-    return FloatingActionButton.extended(
-      onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
-          .add(AppStateBlocEventControlGroup()),
-      backgroundColor: Colors.black,
-      label: const Text('Group', style: TextStyle(color: Colors.white)),
-      icon: const Icon(
-        Icons.design_services,
-        size: 35,
-        color: Colors.white,
-      ),
-    );
+    return NeumorphicButton(
+        onPressed: () => BlocProvider.of<AppStateBlocBloc>(context)
+            .add(AppStateBlocEventControlGroup()),
+        style: NeumorphicStyle(
+          shape: NeumorphicShape.convex,
+          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(100)),
+        ),
+        child: Row(children: [
+        const Icon(
+          Icons.design_services,
+          size: 35,
+          color: Colors.white,
+        ),
+        const Text('Group', style: TextStyle(color: Colors.white)),
+        ], mainAxisSize: MainAxisSize.min));
   };
 
   return NeumorphicButton(
@@ -336,7 +348,6 @@ Widget buildFloatingButtonFromDoubleStreams(
         shape: NeumorphicShape.convex,
         boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(100)),
       ),
-      tooltip: 'Search',
       child: Row(children: [
         const Icon(
           Icons.compare_arrows,

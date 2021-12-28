@@ -26,7 +26,7 @@ class _ControlPanelGroupScreenState
         title: Text(titleName),
       ),
       body: buildGroupControler(context),
-      bottomNavigationBar: buildBottomNavigationBar(),
+      bottomNavigationBar: buildBottomNavigationBar(context),
       floatingActionButton: buildFloatingActionButtons(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );

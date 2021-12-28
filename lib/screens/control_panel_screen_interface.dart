@@ -26,6 +26,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
   bool testGroupFlag = false;
   Color groupInitialColor = Colors.amber;
   late LedState ledState;
+  int selectedIndex = 0;
 
   late CircleColorPickerController circleColorPickerController;
 
@@ -70,7 +71,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
   void setTitleNameAfterBuildIndependent() {
     setState(() {
       testIndependentFlag = true;
-      titleName = 'Control Panel. \n Selescted led: ${ledState.ledName}';
+      titleName = 'Control Panel. \n Selected led: ${ledState.ledName}';
     });
   }
 
@@ -81,20 +82,20 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
     });
   }
 
-  Widget buildBottomNavigationBar() {
+  Widget buildBottomNavigationBar(BuildContext context) {
     return BottomNavigationBar(
       backgroundColor: Colors.white10,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.palette_outlined),
+          icon: const Icon(Icons.palette_outlined),
           label: 'RGB',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.wb_sunny_outlined),
+          icon: const Icon(Icons.wb_sunny_outlined),
           label: 'White',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.grade_outlined),
+          icon: const Icon(Icons.grade_outlined),
           label: 'Scenario',
         ),
       ],
@@ -532,7 +533,7 @@ class ControlPanelScreenInterfaceState<T extends ControlPanelScreenInterface>
                                         name: ledState.name,
                                         active: ledState.activeInIndependent)));
                             titleName =
-                                'Control Panel. \n Selescted led: ${ledState.ledName}';
+                                'Control Panel. \n Selected led: ${ledState.ledName}';
                           });
                           Navigator.of(context).pop();
                         },

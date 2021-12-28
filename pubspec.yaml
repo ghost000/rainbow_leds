@@ -22,7 +22,7 @@ environment:
   flutter: ^2.5.3
 
 dependencies:
-  bloc: ^8.0.0
+  bloc: ^8.0.1
   cupertino_icons: ^1.0.0
   equatable: ^2.0.3
   flutter:
@@ -39,7 +39,7 @@ dependencies:
 dev_dependencies:
   # flutter_test:
   #   sdk: flutter
-  analyzer: ^2.8.0
+  analyzer: ^3.0.0
   build_runner: ^2.0.4
   #effective_dart: ^1.2.0
   #flutter_lints: ^1.0.4

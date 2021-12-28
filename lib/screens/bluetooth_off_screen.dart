@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' show BuildContext, Center, Colors, Column, EdgeInsets, Icon, Icons, Key, MainAxisSize, MediaQuery, Padding, Scaffold, StatelessWidget, Text, Theme, Widget;
+import 'package:flutter/material.dart' show BuildContext, Center, Color, Colors, Column, EdgeInsets, Icon, Icons, Key, MainAxisSize, MediaQuery, Padding, Scaffold, StatelessWidget, Text, Theme, Widget;
 import 'package:flutter_blue/flutter_blue.dart' show BluetoothState;
 
 class BluetoothOffScreen extends StatelessWidget {
@@ -11,7 +11,7 @@ class BluetoothOffScreen extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
       child: Scaffold(
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: const Color(0xFF2D2F2F),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -19,7 +19,7 @@ class BluetoothOffScreen extends StatelessWidget {
               const Icon(
                 Icons.bluetooth_disabled,
                 size: 200.0,
-                color: Colors.white54,
+                color: Colors.lightBlue,
               ),
               Text(
                 'Bluetooth Adapter is ${state != null ? state.toString().substring(15) : 'not available'}.',

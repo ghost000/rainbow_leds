@@ -24,7 +24,7 @@ class _ControlPanelIndependentScreenState
         title: Text(titleName),
       ),
       body: buildIndependentControler(context),
-      bottomNavigationBar: buildBottomNavigationBar(),
+      bottomNavigationBar: buildBottomNavigationBar(context),
       floatingActionButton: buildFloatingActionButtons(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
