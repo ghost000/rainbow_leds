@@ -43,68 +43,47 @@ class _ControlPanelIndependentAndGroupScreenState
   @override
   Widget buildClassWidget(BuildContext context) {
     return DefaultTabController(
-        length: 1,
+        length: 2,
         child: Scaffold(
           appBar: AppBar(
             bottom: PreferredSize(
-              preferredSize: const Size(0.0, 60.0),
-              child: NeumorphicToggle(
-                  onChanged: (value) {
-                    if (value == 0) {
-                      setTitleNameAfterBuildIndependent();
-                      setState(() {
-                        ledStateEnum = LedStateEnum.independent;
-                      });
-                    } else {
-                      setTitleNameAfterBuildGroup();
-                      setState(() {
-                        ledStateEnum = LedStateEnum.group;
-                      });
-                    }
-                    selectedIndex = value;
-                  },
-                  selectedIndex: selectedIndex,
-                  thumb: Container(
-                    color: Color(0xFF4B5F88),
+              preferredSize: const Size(0.0, 44.0),
+              child: TabBar(
+                onTap: (value) {
+                  if (value == 0) {
+                    setTitleNameAfterBuildIndependent();
+                    setState(() {
+                      ledStateEnum = LedStateEnum.independent;
+                    });
+                  } else {
+                    setTitleNameAfterBuildGroup();
+                    setState(() {
+                      ledStateEnum = LedStateEnum.group;
+                    });
+                  }
+                },
+                tabs: const [
+                  Tab(
+                    icon: Icon(Icons.format_italic),
                   ),
-                  children: [
-                    ToggleElement(
-                      foreground: Center(
-                          child: Tab(
-                        icon: Icon(Icons.format_italic),
-                      )),
-                      background: Center(
-                          child: Tab(
-                        icon: Icon(Icons.format_italic),
-                      )),
-                    ),
-                    ToggleElement(
-                      foreground: Center(
-                        child: Tab(
-                          icon: Icon(Icons.format_list_numbered),
-                        ),
-                      ),
-                      background: Center(
-                        child: Tab(
-                          icon: Icon(Icons.format_list_numbered),
-                        ),
-                      ),
-                    ),
-                  ]),
+                  Tab(
+                    icon: Icon(Icons.format_list_numbered),
+                  )
+                ],
+              ),
             ),
             title: Text(titleName),
           ),
           body: TabBarView(
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                ledStateEnum == LedStateEnum.independent
-                    ? buildIndependentControler(context)
-                    : buildGroupControler(context),
+                buildIndependentControler(context),
+                buildGroupControler(context),
               ]),
           bottomNavigationBar: buildBottomNavigationBar(context),
           floatingActionButton: buildFloatingActionButtons(context),
           floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
+          FloatingActionButtonLocation.centerFloat,
         ));
   }
 }
